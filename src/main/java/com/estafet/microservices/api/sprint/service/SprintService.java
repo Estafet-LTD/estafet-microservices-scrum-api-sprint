@@ -19,7 +19,7 @@ public class SprintService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", message.getProjectId());
-		Sprint sprint = template.postForObject("http://localhost:8080/sprint-repository/project/{id}/sprint",
+		Sprint sprint = template.postForObject("http://localhost:8080/project-repository/project/{id}/sprint",
 				new Sprint().start(message.getNoDays()), Sprint.class, params);
 		return getSprint(sprint.getId());
 	}
@@ -28,7 +28,7 @@ public class SprintService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", sprintId);
-		template.delete("http://localhost:8080/sprint-repository/sprint/{id}", params);
+		template.delete("http://localhost:8080/project-repository/sprint/{id}", params);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -44,7 +44,7 @@ public class SprintService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", sprintId);
-		return template.getForObject("http://localhost:8080/sprint-repository/sprint/{id}", Sprint.class, params);
+		return template.getForObject("http://localhost:8080/project-repository/sprint/{id}", Sprint.class, params);
 	}
 
 }
