@@ -45,4 +45,9 @@ public class SprintController {
 		return sprintService.getSprint(id);
 	}
 	
+	@GetMapping(value = "/project/{id}/sprints")
+	public List<Sprint> getProjectSprints(@PathVariable int id) {
+		return sprintService.getProjectSprints(id);
+	}
+	
 }

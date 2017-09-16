@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import com.estafet.microservices.api.sprint.message.StartSprint;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.model.Story;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SprintService {
@@ -45,6 +47,21 @@ public class SprintService {
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", sprintId);
 		return template.getForObject("http://localhost:8080/project-repository/sprint/{id}", Sprint.class, params);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public List<Sprint> getProjectSprints(int projectId) {
+		RestTemplate template = new RestTemplate();
+		List objects = template.getForObject("http://localhost:8080/project-repository/project/{id}/sprints",
+				List.class, projectId);
+		List<Sprint> sprints = new ArrayList<Sprint>();
+		ObjectMapper mapper = new ObjectMapper();
+		for (Object object : objects) {
+			Sprint sprint = mapper.convertValue(object, new TypeReference<Sprint>() {
+			});
+			sprints.add(sprint);
+		}
+		return sprints;
 	}
 
 }

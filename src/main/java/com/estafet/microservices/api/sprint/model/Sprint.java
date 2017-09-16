@@ -15,6 +15,8 @@ public class Sprint {
 
 	private Integer number;
 
+	private String status;
+
 	private List<Story> stories = new ArrayList<Story>();
 
 	public Sprint start(int days) {
@@ -26,6 +28,7 @@ public class Sprint {
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 			} while (!isWorkingDay(cal));
 		endDate = calendarString(cal);
+		status = "Active";
 		return this;
 	}
 
@@ -67,6 +70,10 @@ public class Sprint {
 
 	public List<Story> getStories() {
 		return stories;
+	}
+
+	public String getStatus() {
+		return status;
 	}
 
 }
