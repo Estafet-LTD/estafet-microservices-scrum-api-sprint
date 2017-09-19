@@ -18,12 +18,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SprintService {
 
 	public Sprint startSprint(StartSprint message) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", message.getProjectId());
-		Sprint sprint = template.postForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/project/{id}/sprint",
-				new Sprint().start(message.getNoDays()), Sprint.class, params);
-		return getSprint(sprint.getId());
+		
+		if (!hasActiveSprint(message.getProjectId())) {
+			Sprint sprint = new RestTemplate().postForObject(
+					System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/project/{id}/sprint",
+					new Sprint().start(message.getNoDays()), Sprint.class, message.getProjectId());
+			return getSprint(sprint.getId());	
+		} else {
+			throw new RuntimeException("Cannot start a new sprint when one is active");
+		}
+
+	}
+
+	private boolean hasActiveSprint(int projectId) {
+		for (Sprint sprint : getProjectSprints(projectId)) {
+			if (sprint.getStatus().equals("Active")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void deleteSprint(int sprintId) {
@@ -46,7 +59,8 @@ public class SprintService {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
 		params.put("id", sprintId);
-		return template.getForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/sprint/{id}", Sprint.class, params);
+		return template.getForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/sprint/{id}", Sprint.class,
+				params);
 	}
 
 	@SuppressWarnings("rawtypes")
