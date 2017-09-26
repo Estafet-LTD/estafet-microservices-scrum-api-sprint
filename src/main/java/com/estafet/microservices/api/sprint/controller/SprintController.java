@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.estafet.microservices.api.sprint.message.StartSprint;
 import com.estafet.microservices.api.sprint.model.Sprint;
-import com.estafet.microservices.api.sprint.model.Story;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -34,12 +33,7 @@ public class SprintController {
 		sprintService.deleteSprint(id);
 		return new ResponseEntity(id, HttpStatus.OK);
 	}
-	
-	@GetMapping(value = "/sprint/{id}/stories")
-	public List<Story> getSprintStories(@PathVariable int id) {
-		return sprintService.getSprintStories(id);
-	}
-	
+		
 	@GetMapping(value = "/sprint/{id}")
 	public Sprint getSprint(@PathVariable int id) {
 		return sprintService.getSprint(id);

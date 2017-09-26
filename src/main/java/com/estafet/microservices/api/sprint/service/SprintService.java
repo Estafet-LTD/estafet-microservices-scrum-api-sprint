@@ -1,33 +1,35 @@
 package com.estafet.microservices.api.sprint.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.estafet.microservices.api.sprint.dao.SprintDAO;
 import com.estafet.microservices.api.sprint.message.StartSprint;
 import com.estafet.microservices.api.sprint.model.Sprint;
-import com.estafet.microservices.api.sprint.model.Story;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class SprintService {
 
+	@Autowired
+	private SprintDAO sprintDAO;
+
+	@Transactional
 	public Sprint startSprint(StartSprint message) {
-		
 		if (!hasActiveSprint(message.getProjectId())) {
-			Sprint sprint = new RestTemplate().postForObject(
-					System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/project/{id}/sprint",
-					new Sprint().start(message.getNoDays()), Sprint.class, message.getProjectId());
-			return getSprint(sprint.getId());	
+			Sprint sprint = new Sprint().start(message.getNoDays());
+			List<Sprint> projectSprints = getProjectSprints(message.getProjectId());
+			sprint.setNumber(projectSprints.size() + 1);
+			sprintDAO.create(sprint);
+			return sprint;
 		} else {
 			throw new RuntimeException("Cannot start a new sprint when one is active");
 		}
-
 	}
 
 	private boolean hasActiveSprint(int projectId) {
@@ -39,6 +41,12 @@ public class SprintService {
 		return false;
 	}
 
+	@Transactional(readOnly = true)
+	public List<Sprint> getProjectSprints(int projectId) {
+		return sprintDAO.getProjectSprints(projectId);
+	}
+
+	@Transactional
 	public void deleteSprint(int sprintId) {
 		RestTemplate template = new RestTemplate();
 		Map<String, Integer> params = new HashMap<String, Integer>();
@@ -46,36 +54,11 @@ public class SprintService {
 		template.delete(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/sprint/{id}", params);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<Story> getSprintStories(int sprintId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", sprintId);
-		return template.getForObject(System.getenv("STORY_REPOSITORY_SERVICE_URI") + "/stories?sprintId={id}",
-				new ArrayList().getClass(), params);
-	}
-
+	@Transactional(readOnly = true)
 	public Sprint getSprint(int sprintId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", sprintId);
-		return template.getForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/sprint/{id}", Sprint.class,
-				params);
+		return sprintDAO.getSprint(sprintId);
 	}
-
-	@SuppressWarnings("rawtypes")
-	public List<Sprint> getProjectSprints(int projectId) {
-		RestTemplate template = new RestTemplate();
-		List objects = template.getForObject(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/project/{id}/sprints",
-				List.class, projectId);
-		List<Sprint> sprints = new ArrayList<Sprint>();
-		ObjectMapper mapper = new ObjectMapper();
-		for (Object object : objects) {
-			Sprint sprint = mapper.convertValue(object, new TypeReference<Sprint>() {
-			});
-			sprints.add(sprint);
-		}
-		return sprints;
-	}
+	
+	
 
 }

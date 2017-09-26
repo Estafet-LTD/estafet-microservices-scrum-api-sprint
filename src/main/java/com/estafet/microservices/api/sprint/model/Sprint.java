@@ -1,23 +1,43 @@
 package com.estafet.microservices.api.sprint.model;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "SPRINT")
 public class Sprint {
 
+	@Id
+	@SequenceGenerator(name = "SPRINT_ID_SEQ", sequenceName = "SPRINT_ID_SEQ", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SPRINT_ID_SEQ")
+	@Column(name = "SPRINT_ID")
 	private Integer id;
 
+	@Column(name = "START_DATE", nullable = false)
 	private String startDate;
 
+	@Column(name = "END_DATE", nullable = false)
 	private String endDate;
 
+	@Column(name = "SPRINT_NUMBER", nullable = false)
 	private Integer number;
 
-	private String status;
+	@Column(name = "SPRINT_STATUS", nullable = false)
+	private String status = "Not Started";
 
-	private List<Story> stories = new ArrayList<Story>();
+	@Column(name = "PROJECT_ID", nullable = false)
+	private Integer projectId;
+
+	@Column(name = "NO_DAYS", nullable = false)
+	private Integer noDays;
 
 	public Sprint start(int days) {
 		startDate = calendarString(newCalendar());
@@ -68,12 +88,20 @@ public class Sprint {
 		return number;
 	}
 
-	public List<Story> getStories() {
-		return stories;
-	}
-
 	public String getStatus() {
 		return status;
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public Integer getNoDays() {
+		return noDays;
+	}
+
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 
 }

@@ -9,6 +9,9 @@
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="searchSystemEnvironment" value="true" />
 	</bean>
+	
+	<import resource="classpath:sprint-api-entity-application-context.xml" />
+	<import resource="classpath:sprint-api-jms-application-context.xml" />
 
 	<mvc:annotation-driven />
 	<context:component-scan base-package="com.estafet.microservices.api.sprint" />

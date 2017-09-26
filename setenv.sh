@@ -1,3 +1,8 @@
-export STORY_REPOSITORY_SERVICE_URI=http://localhost:8080/story-repository
-export PROJECT_REPOSITORY_SERVICE_URI=http://localhost:8080/project-repository
+export STORY_API_SERVICE_URI=http://localhost:8080/story-api
+
+export SPRINT_API_JDBC_URL=jdbc:postgresql://localhost:5432/sprint-api
+export SPRINT_API_DB_USER=postgres
+export SPRINT_API_DB_PASSWORD=welcome1
+
+
 
