@@ -39,6 +39,11 @@ public class Sprint {
 	@Column(name = "NO_DAYS", nullable = false)
 	private Integer noDays;
 
+	public Sprint update(Sprint newSprint) {
+		status = newSprint.getStatus() != null ? newSprint.getStatus() : status;
+		return this;
+	}
+
 	public Sprint start(int days) {
 		startDate = calendarString(newCalendar());
 		Calendar cal = newCalendar();
@@ -49,6 +54,7 @@ public class Sprint {
 			} while (!isWorkingDay(cal));
 		endDate = calendarString(cal);
 		status = "Active";
+		noDays = days;
 		return this;
 	}
 
@@ -70,6 +76,11 @@ public class Sprint {
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
+	}
+
+	public Sprint setId(Integer id) {
+		this.id = id;
+		return this;
 	}
 
 	public Integer getId() {
@@ -98,6 +109,10 @@ public class Sprint {
 
 	public Integer getNoDays() {
 		return noDays;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 
 	public void setNumber(Integer number) {

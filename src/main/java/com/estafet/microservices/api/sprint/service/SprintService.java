@@ -25,6 +25,7 @@ public class SprintService {
 			Sprint sprint = new Sprint().start(message.getNoDays());
 			List<Sprint> projectSprints = getProjectSprints(message.getProjectId());
 			sprint.setNumber(projectSprints.size() + 1);
+			sprint.setProjectId(message.getProjectId());
 			sprintDAO.create(sprint);
 			return sprint;
 		} else {
@@ -59,6 +60,10 @@ public class SprintService {
 		return sprintDAO.getSprint(sprintId);
 	}
 	
-	
+	@Transactional
+	public Sprint updateSprint(Sprint update) {
+		Sprint sprint = getSprint(update.getId());
+		return sprintDAO.update(sprint.update(update));
+	}
 
 }

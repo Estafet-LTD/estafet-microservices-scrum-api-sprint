@@ -38,7 +38,7 @@
 		<property name="pubSubDomain" value="true" />
 	</bean>
 	
-	<bean id="updateSprintProducer" class="com.estafet.microservices.repository.project.jms.UpdateSprintProducer">
+	<bean id="updateSprintProducer" class="com.estafet.microservices.api.sprint.jms.UpdateSprintProducer">
    		<property name="jmsTemplate" ref="updateSprintJmsTemplate" />
   	</bean>
 
