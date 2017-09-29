@@ -50,4 +50,14 @@ public class SprintController {
 		return sprintService.getProjectSprints(id);
 	}
 	
+	@GetMapping(value = "/sprint/{id}/days")
+	public List<String> getSprintDays(@PathVariable int id) {
+		return sprintService.getSprintDays(id);
+	}
+	
+	@GetMapping(value = "/sprint/{id}/day")
+	public String getSprintDay(@PathVariable int id) {
+		return sprintService.getSprintDay(id);
+	}
+	
 }

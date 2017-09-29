@@ -1,7 +1,10 @@
 package com.estafet.microservices.api.sprint.model;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,20 +48,59 @@ public class Sprint {
 	}
 
 	public Sprint start(int days) {
-		startDate = calendarString(newCalendar());
+		startDate = toCalendarString(newCalendar());
 		Calendar cal = newCalendar();
-		int workingDaysToAdd = 5;
-		for (int i = 0; i < workingDaysToAdd; i++)
+		for (int i = 0; i < days; i++)
 			do {
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 			} while (!isWorkingDay(cal));
-		endDate = calendarString(cal);
+		endDate = toCalendarString(cal);
 		status = "Active";
 		noDays = days;
 		return this;
 	}
+	
+	public String getSprintDay() {
+		String today = toCalendarString(newCalendar());
+		for (String day : getSprintDays()) {
+			if (day.equals(today)) {
+				return today;
+			}
+		}
+		return getSprintDays().get(0);
+	}
+ 
+	public List<String> getSprintDays() {
+		List<String> workingDays = new ArrayList<String>(noDays);
+		for (int i = 0; i < noDays; i++) {
+			Calendar workDay = toCalendar(startDate);
+			workDay.add(Calendar.DAY_OF_MONTH, i);
+			workDay = getWorkingDay(workDay);
+			workingDays.add(toCalendarString(workDay));
+		}
+		return workingDays;
+	}
+	
+	private Calendar getWorkingDay(Calendar day) {
+		if (isWorkingDay(day)) {
+			return day;
+		} else {
+			day.add(Calendar.DAY_OF_MONTH, 1);
+			return getWorkingDay(day);
+		}
+	}
+	
+	private Calendar toCalendar(String calendarString) {
+		try {
+			Calendar cal = newCalendar();
+			cal.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(calendarString));
+			return cal;
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-	private String calendarString(Calendar calendar) {
+	private String toCalendarString(Calendar calendar) {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
 	}
 

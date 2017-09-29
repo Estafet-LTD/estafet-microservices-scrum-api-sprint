@@ -60,6 +60,16 @@ public class SprintService {
 		return sprintDAO.getSprint(sprintId);
 	}
 	
+	@Transactional(readOnly = true)
+	public List<String> getSprintDays(int sprintId) {
+		return sprintDAO.getSprint(sprintId).getSprintDays();
+	}
+	
+	@Transactional(readOnly = true)
+	public String getSprintDay(int sprintId) {
+		return sprintDAO.getSprint(sprintId).getSprintDay();
+	}
+	
 	@Transactional
 	public Sprint updateSprint(Sprint update) {
 		Sprint sprint = getSprint(update.getId());
