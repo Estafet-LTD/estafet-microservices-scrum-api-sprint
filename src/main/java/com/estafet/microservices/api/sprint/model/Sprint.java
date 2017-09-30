@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "SPRINT")
 public class Sprint {
@@ -60,6 +62,7 @@ public class Sprint {
 		return this;
 	}
 	
+	@JsonIgnore
 	public String getSprintDay() {
 		String today = toCalendarString(newCalendar());
 		for (String day : getSprintDays()) {
@@ -70,10 +73,11 @@ public class Sprint {
 		return getSprintDays().get(0);
 	}
  
+	@JsonIgnore
 	public List<String> getSprintDays() {
 		List<String> workingDays = new ArrayList<String>(noDays);
 		for (int i = 0; i < noDays; i++) {
-			Calendar workDay = toCalendar(startDate);
+			Calendar workDay = getWorkingDay(toCalendar(startDate));
 			workDay.add(Calendar.DAY_OF_MONTH, i);
 			workDay = getWorkingDay(workDay);
 			workingDays.add(toCalendarString(workDay));

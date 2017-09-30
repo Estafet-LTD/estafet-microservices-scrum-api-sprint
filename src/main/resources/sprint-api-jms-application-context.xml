@@ -41,5 +41,19 @@
 	<bean id="updateSprintProducer" class="com.estafet.microservices.api.sprint.jms.UpdateSprintProducer">
    		<property name="jmsTemplate" ref="updateSprintJmsTemplate" />
   	</bean>
+  	
+  	<bean id="newSprintTopic" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="new.sprint.topic" />
+	</bean>
+
+	<bean id="newSprintJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="pooledJmsConnectionFactory" />
+		<property name="defaultDestination" ref="newSprintTopic" />
+		<property name="pubSubDomain" value="true" />
+	</bean>
+	
+	<bean id="newSprintProducer" class="com.estafet.microservices.api.sprint.jms.NewSprintProducer">
+   		<property name="jmsTemplate" ref="newSprintJmsTemplate" />
+  	</bean>
 
 </beans>

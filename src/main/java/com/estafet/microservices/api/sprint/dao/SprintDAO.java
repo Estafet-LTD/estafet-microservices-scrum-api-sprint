@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.estafet.microservices.api.sprint.jms.NewSprintProducer;
 import com.estafet.microservices.api.sprint.jms.UpdateSprintProducer;
 import com.estafet.microservices.api.sprint.model.Sprint;
 
@@ -19,6 +20,9 @@ public class SprintDAO {
 
 	@Autowired
 	private UpdateSprintProducer updateSprintProducer;
+	
+	@Autowired
+	private NewSprintProducer newSprintProducer;
 
 	public Sprint getSprint(int sprintId) {
 		return entityManager.find(Sprint.class, new Integer(sprintId));
@@ -31,6 +35,7 @@ public class SprintDAO {
 
 	public Sprint create(Sprint sprint) {
 		entityManager.persist(sprint);
+		newSprintProducer.sendMessage(sprint);
 		return sprint;
 	}
 
