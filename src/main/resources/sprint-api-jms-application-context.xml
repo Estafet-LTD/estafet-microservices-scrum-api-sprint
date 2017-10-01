@@ -55,13 +55,7 @@
 	<bean id="newSprintProducer" class="com.estafet.microservices.api.sprint.jms.NewSprintProducer">
    		<property name="jmsTemplate" ref="newSprintJmsTemplate" />
   	</bean>
-  	
-  	<jms:listener-container connection-factory="pooledJmsConnectionFactory"
-		acknowledge="auto" destination-type="topic">
-		<jms:listener destination="new.story.topic" ref="newStoryConsumer"
-			method="onMessage" />
-	</jms:listener-container>
-	
+  		
 	<jms:listener-container connection-factory="pooledJmsConnectionFactory"
 		acknowledge="auto" destination-type="topic">
 		<jms:listener destination="update.story.topic" ref="updateStoryConsumer"

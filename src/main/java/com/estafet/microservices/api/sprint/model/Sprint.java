@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -49,15 +51,11 @@ public class Sprint {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "storySprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<Story> stories = new ArrayList<Story>();
+	private Set<Story> stories = new HashSet<Story>();
 
 	public Sprint update(Sprint newSprint) {
 		status = newSprint.getStatus() != null ? newSprint.getStatus() : status;
 		return this;
-	}
-
-	public List<Story> getStories() {
-		return stories;
 	}
 
 	public Sprint start(int days) {
@@ -72,32 +70,27 @@ public class Sprint {
 		noDays = days;
 		return this;
 	}
-	
+
 	public void addStory(Story story) {
 		story.setStorySprint(this);
-		stories.add(story);
-	}
-
-	public void updateStory(Story updated) {
-		for (Story story : stories) {
-			if (story.getId().equals(updated.getId())) {
-				story.update(updated);
-			}
+		if (!stories.add(story)) {
+			stories.remove(story);
+			stories.add(story);
 		}
 		updateStatus();
 	}
-	
+
 	private void updateStatus() {
-		if (status.equals("In Progress")) {
+		if (status.equals("Active") && !stories.isEmpty()) {
 			for (Story story : stories) {
 				if (!story.getStatus().equals("Completed")) {
 					return;
 				}
 			}
+			status = "Completed";
 		}
-		status = "Completed";
 	}
-	
+
 	@JsonIgnore
 	public String getSprintDay() {
 		String today = toCalendarString(newCalendar());

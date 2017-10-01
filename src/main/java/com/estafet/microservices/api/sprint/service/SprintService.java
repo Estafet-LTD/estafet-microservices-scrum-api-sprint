@@ -19,16 +19,20 @@ public class SprintService {
 	
 	@Transactional
 	public void addStory(Story story) {
-		Sprint sprint = sprintDAO.getSprint(story.getSprintId());
-		sprint.addStory(story);
-		sprintDAO.update(sprint);
+		if (story.getSprintId() != null) {
+			Sprint sprint = sprintDAO.getSprint(story.getSprintId());
+			sprint.addStory(story);
+			sprintDAO.update(sprint);	
+		}
 	}
 	
 	@Transactional
 	public void updateStory(Story story) {
-		Sprint sprint = sprintDAO.getSprint(story.getSprintId());
-		sprint.addStory(story);
-		sprintDAO.update(sprint);
+		if (story.getSprintId() != null) {
+			Sprint sprint = sprintDAO.getSprint(story.getSprintId());
+			sprint.addStory(story);
+			sprintDAO.update(sprint);	
+		}
 	}
 
 	@Transactional
