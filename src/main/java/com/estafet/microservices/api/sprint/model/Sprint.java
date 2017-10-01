@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -44,9 +47,17 @@ public class Sprint {
 	@Column(name = "NO_DAYS", nullable = false)
 	private Integer noDays;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "storySprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<Story> stories = new ArrayList<Story>();
+
 	public Sprint update(Sprint newSprint) {
 		status = newSprint.getStatus() != null ? newSprint.getStatus() : status;
 		return this;
+	}
+
+	public List<Story> getStories() {
+		return stories;
 	}
 
 	public Sprint start(int days) {
@@ -62,6 +73,31 @@ public class Sprint {
 		return this;
 	}
 	
+	public void addStory(Story story) {
+		story.setStorySprint(this);
+		stories.add(story);
+	}
+
+	public void updateStory(Story updated) {
+		for (Story story : stories) {
+			if (story.getId().equals(updated.getId())) {
+				story.update(updated);
+			}
+		}
+		updateStatus();
+	}
+	
+	private void updateStatus() {
+		if (status.equals("In Progress")) {
+			for (Story story : stories) {
+				if (!story.getStatus().equals("Completed")) {
+					return;
+				}
+			}
+		}
+		status = "Completed";
+	}
+	
 	@JsonIgnore
 	public String getSprintDay() {
 		String today = toCalendarString(newCalendar());
@@ -72,7 +108,7 @@ public class Sprint {
 		}
 		return getSprintDays().get(0);
 	}
- 
+
 	@JsonIgnore
 	public List<String> getSprintDays() {
 		List<String> workingDays = new ArrayList<String>(noDays);
@@ -84,7 +120,7 @@ public class Sprint {
 		}
 		return workingDays;
 	}
-	
+
 	private Calendar getWorkingDay(Calendar day) {
 		if (isWorkingDay(day)) {
 			return day;
@@ -93,7 +129,7 @@ public class Sprint {
 			return getWorkingDay(day);
 		}
 	}
-	
+
 	private Calendar toCalendar(String calendarString) {
 		try {
 			Calendar cal = newCalendar();

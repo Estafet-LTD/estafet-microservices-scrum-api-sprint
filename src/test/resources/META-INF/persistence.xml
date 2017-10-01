@@ -7,6 +7,7 @@
 
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<class>com.estafet.microservices.api.sprint.model.Sprint</class>
+		<class>com.estafet.microservices.api.sprint.model.Story</class>
 		<exclude-unlisted-classes />
 
 		<properties>

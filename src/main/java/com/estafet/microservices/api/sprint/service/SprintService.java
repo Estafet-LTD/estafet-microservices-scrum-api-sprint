@@ -1,23 +1,35 @@
 package com.estafet.microservices.api.sprint.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import com.estafet.microservices.api.sprint.dao.SprintDAO;
 import com.estafet.microservices.api.sprint.message.StartSprint;
 import com.estafet.microservices.api.sprint.model.Sprint;
+import com.estafet.microservices.api.sprint.model.Story;
 
 @Service
 public class SprintService {
 
 	@Autowired
 	private SprintDAO sprintDAO;
+	
+	@Transactional
+	public void addStory(Story story) {
+		Sprint sprint = sprintDAO.getSprint(story.getSprintId());
+		sprint.addStory(story);
+		sprintDAO.update(sprint);
+	}
+	
+	@Transactional
+	public void updateStory(Story story) {
+		Sprint sprint = sprintDAO.getSprint(story.getSprintId());
+		sprint.addStory(story);
+		sprintDAO.update(sprint);
+	}
 
 	@Transactional
 	public Sprint startSprint(StartSprint message) {
@@ -47,14 +59,6 @@ public class SprintService {
 		return sprintDAO.getProjectSprints(projectId);
 	}
 
-	@Transactional
-	public void deleteSprint(int sprintId) {
-		RestTemplate template = new RestTemplate();
-		Map<String, Integer> params = new HashMap<String, Integer>();
-		params.put("id", sprintId);
-		template.delete(System.getenv("PROJECT_REPOSITORY_SERVICE_URI") + "/sprint/{id}", params);
-	}
-
 	@Transactional(readOnly = true)
 	public Sprint getSprint(int sprintId) {
 		return sprintDAO.getSprint(sprintId);
@@ -70,10 +74,4 @@ public class SprintService {
 		return sprintDAO.getSprint(sprintId).getSprintDay();
 	}
 	
-	@Transactional
-	public Sprint updateSprint(Sprint update) {
-		Sprint sprint = getSprint(update.getId());
-		return sprintDAO.update(sprint.update(update));
-	}
-
 }
