@@ -73,4 +73,8 @@ SPRINT_API_DB_USER=postgres
 SPRINT_API_DB_PASSWORD=welcome1
 ```
 
+## Domain Model States
+A sprint has three states. It can only progress from each state via the specific actions or events illustrated.
+
+![alt tag](https://github.com/Estafet-LTD/estafet-microservices-scrum-api-sprint/blob/master/SprintStateModel.png)
 
