@@ -16,32 +16,30 @@ public class SprintService {
 
 	@Autowired
 	private SprintDAO sprintDAO;
-	
+
 	@Transactional
 	public void addStory(Story story) {
 		if (story.getSprintId() != null) {
 			Sprint sprint = sprintDAO.getSprint(story.getSprintId());
 			sprint.addStory(story);
-			sprintDAO.update(sprint);	
+			sprintDAO.update(sprint);
 		}
 	}
-	
+
 	@Transactional
 	public void updateStory(Story story) {
 		if (story.getSprintId() != null) {
 			Sprint sprint = sprintDAO.getSprint(story.getSprintId());
 			sprint.addStory(story);
-			sprintDAO.update(sprint);	
+			sprintDAO.update(sprint);
 		}
 	}
 
 	@Transactional
 	public Sprint startSprint(StartSprint message) {
 		if (!hasActiveSprint(message.getProjectId())) {
-			Sprint sprint = new Sprint().start(message.getNoDays());
 			List<Sprint> projectSprints = getProjectSprints(message.getProjectId());
-			sprint.setNumber(projectSprints.size() + 1);
-			sprint.setProjectId(message.getProjectId());
+			Sprint sprint = new Sprint().start(message.getProjectId(), message.getNoDays(), projectSprints);
 			sprintDAO.create(sprint);
 			return sprint;
 		} else {
@@ -67,15 +65,15 @@ public class SprintService {
 	public Sprint getSprint(int sprintId) {
 		return sprintDAO.getSprint(sprintId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<String> getSprintDays(int sprintId) {
 		return sprintDAO.getSprint(sprintId).getSprintDays();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public String getSprintDay(int sprintId) {
 		return sprintDAO.getSprint(sprintId).getSprintDay();
 	}
-	
+
 }

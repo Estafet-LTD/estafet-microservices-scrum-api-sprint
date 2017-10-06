@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,17 +60,34 @@ public class Sprint {
 		return this;
 	}
 
-	public Sprint start(int days) {
-		startDate = toCalendarString(newCalendar());
-		Calendar cal = newCalendar();
-		for (int i = 0; i < days; i++)
-			do {
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-			} while (!isWorkingDay(cal));
-		endDate = toCalendarString(cal);
-		status = "Active";
-		noDays = days;
-		return this;
+	public Sprint start(int projectId, int days, List<Sprint> projectSprints) {
+		if ("Not Started".equals(status)) {
+			this.startDate = projectSprints.isEmpty() ? toCalendarString(newCalendar())
+					: getLastSprint(projectSprints).endDate;
+			Calendar cal = newCalendar();
+			for (int i = 0; i < days; i++)
+				do {
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+				} while (!isWorkingDay(cal));
+			this.endDate = toCalendarString(cal);
+			this.status = "Active";
+			this.noDays = days;
+			this.number = projectSprints.size() + 1;
+			this.projectId = projectId;
+			return this;
+		}
+		throw new RuntimeException("Canot start a sprint that has already started.");
+
+	}
+
+	private Sprint getLastSprint(List<Sprint> projectSprints) {
+		Collections.sort(projectSprints, new Comparator<Sprint>() {
+			@Override
+			public int compare(Sprint o1, Sprint o2) {
+				return toCalendar(o2.getEndDate()).compareTo(toCalendar(o1.getEndDate()));
+			}
+		});
+		return projectSprints.get(0);
 	}
 
 	public void addStory(Story story) {
