@@ -1,5 +1,6 @@
 package com.estafet.microservices.api.sprint.model;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,7 +26,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "SPRINT")
-public class Sprint {
+public class Sprint implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8320751302679649068L;
 
 	@Id
 	@SequenceGenerator(name = "SPRINT_ID_SEQ", sequenceName = "SPRINT_ID_SEQ", allocationSize = 1)

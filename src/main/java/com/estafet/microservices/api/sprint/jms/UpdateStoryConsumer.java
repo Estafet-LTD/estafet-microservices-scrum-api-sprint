@@ -1,30 +1,23 @@
 package com.estafet.microservices.api.sprint.jms;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.estafet.microservices.api.sprint.model.Story;
 import com.estafet.microservices.api.sprint.service.SprintService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component(value = "updateStoryConsumer")
+@Component
 public class UpdateStoryConsumer {
 
 	@Autowired
 	private SprintService sprintService;
-	
+
 	@Transactional
-	public void onMessage(String message) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			Story story = mapper.readValue(message, Story.class);
-			sprintService.updateStory(story);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	@JmsListener(destination = "update.story.topic", containerFactory = "myFactory")
+	public void onMessage(Story story) {
+		sprintService.updateStory(story);
 	}
 
 }

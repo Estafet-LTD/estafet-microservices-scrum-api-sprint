@@ -1,11 +1,14 @@
 package com.estafet.microservices.api.sprint.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,7 +16,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "STORY")
-public class Story {
+public class Story implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3122234334138115967L;
 
 	@Id
 	@Column(name = "STORY_ID")
@@ -22,6 +30,7 @@ public class Story {
 	@Column(name = "STATUS", nullable = false)
 	private String status;
 
+	@Transient
 	private Integer sprintId;
 
 	@JsonIgnore
