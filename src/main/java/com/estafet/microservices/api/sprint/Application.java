@@ -34,12 +34,12 @@ public class Application extends SpringBootServletInitializer {
 		return application.sources(Application.class);
 	}
 
-	@Bean
+	/*@Bean
 	public io.opentracing.Tracer jaegerTracer() {
 		return new com.uber.jaeger.Configuration("sprint-api",
 				com.uber.jaeger.Configuration.SamplerConfiguration.fromEnv(),
 				com.uber.jaeger.Configuration.ReporterConfiguration.fromEnv()).getTracer();
-	}
+	}*/
 
 	@Bean
 	public JmsListenerContainerFactory<?> myFactory(ConnectionFactory connectionFactory,
