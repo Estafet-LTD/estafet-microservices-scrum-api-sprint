@@ -13,6 +13,6 @@ public class NewSprintProducer {
 	private JmsTemplate jmsTemplate;
 	
 	public void sendMessage(Sprint sprint) {
-		jmsTemplate.convertAndSend("new.sprint.topic", sprint);
+		jmsTemplate.convertAndSend("new.sprint.topic", sprint.toJSON());
 	}
 }

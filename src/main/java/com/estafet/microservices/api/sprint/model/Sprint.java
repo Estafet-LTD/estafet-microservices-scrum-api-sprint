@@ -1,6 +1,6 @@
 package com.estafet.microservices.api.sprint.model;
 
-import java.io.Serializable;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,15 +23,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
 @Table(name = "SPRINT")
-public class Sprint implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8320751302679649068L;
+public class Sprint {
 
 	@Id
 	@SequenceGenerator(name = "SPRINT_ID_SEQ", sequenceName = "SPRINT_ID_SEQ", allocationSize = 1)
@@ -219,4 +215,12 @@ public class Sprint implements Serializable {
 		this.number = number;
 	}
 
+	public String toJSON() {
+		try {
+			return new ObjectMapper().writeValueAsString(this);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }

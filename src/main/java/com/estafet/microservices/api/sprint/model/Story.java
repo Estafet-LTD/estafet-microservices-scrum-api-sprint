@@ -1,6 +1,6 @@
 package com.estafet.microservices.api.sprint.model;
 
-import java.io.Serializable;
+import java.io.IOException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,16 +12,12 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "STORY")
-public class Story implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3122234334138115967L;
+public class Story {
 
 	@Id
 	@Column(name = "STORY_ID")
@@ -86,6 +82,14 @@ public class Story implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+	
+	public static Story fromJSON(String message) {
+		try {
+			return new ObjectMapper().readValue(message, Story.class);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
