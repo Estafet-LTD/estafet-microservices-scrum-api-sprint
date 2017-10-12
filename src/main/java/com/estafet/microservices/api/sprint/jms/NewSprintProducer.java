@@ -13,6 +13,7 @@ public class NewSprintProducer {
 	private JmsTemplate jmsTemplate;
 	
 	public void sendMessage(Sprint sprint) {
+		jmsTemplate.setPubSubDomain(true);
 		jmsTemplate.convertAndSend("new.sprint.topic", sprint.toJSON());
 	}
 }
