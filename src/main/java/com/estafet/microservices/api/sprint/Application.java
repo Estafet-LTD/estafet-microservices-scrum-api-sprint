@@ -34,6 +34,13 @@ public class Application extends SpringBootServletInitializer {
 	}
 
 	@Bean
+	public io.opentracing.Tracer jaegerTracer() {
+		return new com.uber.jaeger.Configuration("sprint-api",
+				com.uber.jaeger.Configuration.SamplerConfiguration.fromEnv(),
+				com.uber.jaeger.Configuration.ReporterConfiguration.fromEnv()).getTracer();
+	}
+	
+	@Bean
 	public MessageConverter tracingJmsMessageConverter(Tracer tracer) {
 		return new PropagatingTracingMessageConverter(new SimpleMessageConverter(), tracer);
 	}
