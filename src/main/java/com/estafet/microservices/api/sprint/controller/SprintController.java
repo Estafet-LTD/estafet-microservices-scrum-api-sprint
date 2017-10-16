@@ -22,6 +22,11 @@ public class SprintController {
 	@Autowired
 	private SprintService sprintService;
 	
+	@GetMapping(value = "/api")
+	public Sprint getAPI() {
+		return Sprint.getAPI();
+	}
+	
 	@PostMapping("/start-sprint")
 	public ResponseEntity startSprint(@RequestBody StartSprint message) {
 		return new ResponseEntity(sprintService.startSprint(message), HttpStatus.OK);

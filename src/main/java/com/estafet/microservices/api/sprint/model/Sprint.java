@@ -62,6 +62,10 @@ public class Sprint {
 		return this;
 	}
 
+	public Sprint start(int projectId, int days) {
+		return start(projectId, days, new ArrayList<Sprint>());
+	}
+	
 	public Sprint start(int projectId, int days, List<Sprint> projectSprints) {
 		if ("Not Started".equals(status)) {
 			this.startDate = projectSprints.isEmpty() ? toCalendarString(newCalendar())
@@ -223,4 +227,9 @@ public class Sprint {
 		}
 	}
 	
+	public static Sprint getAPI() {
+		Sprint sprint = new Sprint().start(1, 5);
+		sprint.id = 1;
+		return sprint;
+	}
 }
