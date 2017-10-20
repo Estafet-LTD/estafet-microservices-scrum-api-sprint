@@ -130,13 +130,22 @@ public class Sprint {
 	@JsonIgnore
 	public List<String> getSprintDays() {
 		List<String> workingDays = new ArrayList<String>(noDays);
-		for (int i = 0; i < noDays; i++) {
-			Calendar workDay = getWorkingDay(toCalendar(startDate));
-			workDay.add(Calendar.DAY_OF_MONTH, i);
-			workDay = getWorkingDay(workDay);
-			workingDays.add(toCalendarString(workDay));
+		String day = getNextWorkingDay(startDate);
+		while (toCalendar(day).after(toCalendar(endDate))) {
+			day = getNextWorkingDay(increment(day));
+			workingDays.add(day);
 		}
 		return workingDays;
+	}
+	
+	private String increment(String day) {
+		Calendar cal = toCalendar(day);
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		return toCalendarString(cal);
+	}
+	
+	private String getNextWorkingDay(String day) {
+		return toCalendarString(getWorkingDay(toCalendar(day)));
 	}
 
 	private Calendar getWorkingDay(Calendar day) {
