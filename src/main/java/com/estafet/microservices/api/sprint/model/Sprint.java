@@ -65,17 +65,26 @@ public class Sprint {
 	public Sprint start(int projectId, int days) {
 		return start(projectId, days, new ArrayList<Sprint>());
 	}
-	
+
+	public Sprint start(Calendar today, int projectId, int days) {
+		return start(today, projectId, days, new ArrayList<Sprint>());
+	}
+
 	public Sprint start(int projectId, int days, List<Sprint> projectSprints) {
+		return start(newCalendar(), projectId, days, projectSprints);
+	}
+
+	public Sprint start(Calendar today, int projectId, int days, List<Sprint> projectSprints) {
 		if ("Not Started".equals(status)) {
-			this.startDate = projectSprints.isEmpty() ? toCalendarString(newCalendar())
-					: getLastSprint(projectSprints).endDate;
-			Calendar cal = toCalendar(startDate);
-			for (int i = 0; i < days; i++)
-				do {
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-				} while (!isWorkingDay(cal));
-			this.endDate = toCalendarString(cal);
+			this.startDate = projectSprints.isEmpty() ? toCalendarString(today)
+					: increment(getLastSprint(projectSprints).endDate);
+			String day = getNextWorkingDay(startDate);
+			int i = 1;
+			while (i < days) {
+				day = getNextWorkingDay(increment(day));
+				i++;
+			}
+			this.endDate = day;
 			this.status = "Active";
 			this.noDays = days;
 			this.number = projectSprints.size() + 1;
@@ -83,7 +92,6 @@ public class Sprint {
 			return this;
 		}
 		throw new RuntimeException("Canot start a sprint that has already started.");
-
 	}
 
 	private Sprint getLastSprint(List<Sprint> projectSprints) {
@@ -131,19 +139,21 @@ public class Sprint {
 	public List<String> getSprintDays() {
 		List<String> workingDays = new ArrayList<String>(noDays);
 		String day = getNextWorkingDay(startDate);
-		while (toCalendar(day).after(toCalendar(endDate))) {
-			day = getNextWorkingDay(increment(day));
+		int i = 0;
+		while (i < noDays) {
 			workingDays.add(day);
+			day = getNextWorkingDay(increment(day));
+			i++;
 		}
 		return workingDays;
 	}
-	
+
 	private String increment(String day) {
 		Calendar cal = toCalendar(day);
 		cal.add(Calendar.DAY_OF_MONTH, 1);
 		return toCalendarString(cal);
 	}
-	
+
 	private String getNextWorkingDay(String day) {
 		return toCalendarString(getWorkingDay(toCalendar(day)));
 	}
@@ -157,7 +167,7 @@ public class Sprint {
 		}
 	}
 
-	private Calendar toCalendar(String calendarString) {
+	static Calendar toCalendar(String calendarString) {
 		try {
 			Calendar cal = newCalendar();
 			cal.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(calendarString));
@@ -167,7 +177,7 @@ public class Sprint {
 		}
 	}
 
-	private String toCalendarString(Calendar calendar) {
+	static String toCalendarString(Calendar calendar) {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
 	}
 
@@ -178,7 +188,7 @@ public class Sprint {
 		return true;
 	}
 
-	private Calendar newCalendar() {
+	static Calendar newCalendar() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -235,7 +245,7 @@ public class Sprint {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Sprint getAPI() {
 		Sprint sprint = new Sprint().start(1, 5);
 		sprint.id = 1;
