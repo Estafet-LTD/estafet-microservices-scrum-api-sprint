@@ -70,7 +70,7 @@ public class Sprint {
 		if ("Not Started".equals(status)) {
 			this.startDate = projectSprints.isEmpty() ? toCalendarString(newCalendar())
 					: getLastSprint(projectSprints).endDate;
-			Calendar cal = newCalendar();
+			Calendar cal = toCalendar(startDate);
 			for (int i = 0; i < days; i++)
 				do {
 					cal.add(Calendar.DAY_OF_MONTH, 1);
