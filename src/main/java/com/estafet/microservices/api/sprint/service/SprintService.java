@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.estafet.microservices.api.sprint.dao.SprintDAO;
+import com.estafet.microservices.api.sprint.factory.SprintFactory;
 import com.estafet.microservices.api.sprint.message.StartSprint;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.model.Story;
@@ -16,6 +17,9 @@ public class SprintService {
 
 	@Autowired
 	private SprintDAO sprintDAO;
+	
+	@Autowired
+	private SprintFactory sprintFactory;
 
 	@Transactional
 	public void addStory(Story story) {
@@ -37,23 +41,9 @@ public class SprintService {
 
 	@Transactional
 	public Sprint startSprint(StartSprint message) {
-		if (!hasActiveSprint(message.getProjectId())) {
-			List<Sprint> projectSprints = getProjectSprints(message.getProjectId());
-			Sprint sprint = new Sprint().start(message.getProjectId(), message.getNoDays(), projectSprints);
-			sprintDAO.create(sprint);
-			return sprint;
-		} else {
-			throw new RuntimeException("Cannot start a new sprint when one is active");
-		}
-	}
-
-	private boolean hasActiveSprint(int projectId) {
-		for (Sprint sprint : getProjectSprints(projectId)) {
-			if (sprint.getStatus().equals("Active")) {
-				return true;
-			}
-		}
-		return false;
+		Sprint sprint = sprintFactory.createSprint(message);
+		sprintDAO.create(sprint);
+		return sprint;
 	}
 
 	@Transactional(readOnly = true)
