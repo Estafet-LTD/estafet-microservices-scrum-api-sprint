@@ -77,7 +77,7 @@ public class Sprint {
 	public Sprint start(Calendar today, int projectId, int days, List<Sprint> projectSprints) {
 		if ("Not Started".equals(status)) {
 			this.startDate = projectSprints.isEmpty() ? toCalendarString(today)
-					: increment(getLastSprint(projectSprints).endDate);
+					: getNextWorkingDay(increment(getLastSprint(projectSprints).endDate));
 			String day = getNextWorkingDay(startDate);
 			int i = 1;
 			while (i < days) {
