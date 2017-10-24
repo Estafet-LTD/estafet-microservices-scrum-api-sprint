@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.estafet.microservices.api.sprint.dao.SprintDAO;
-import com.estafet.microservices.api.sprint.factory.SprintFactory;
-import com.estafet.microservices.api.sprint.message.StartSprint;
+import com.estafet.microservices.api.sprint.model.Project;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.model.Story;
 
@@ -17,9 +16,6 @@ public class SprintService {
 
 	@Autowired
 	private SprintDAO sprintDAO;
-	
-	@Autowired
-	private SprintFactory sprintFactory;
 
 	@Transactional
 	public void addStory(Story story) {
@@ -38,12 +34,22 @@ public class SprintService {
 			sprintDAO.update(sprint);
 		}
 	}
-
+	
 	@Transactional
-	public Sprint startSprint(StartSprint message) {
-		Sprint sprint = sprintFactory.createSprint(message);
+	public void newProject(Project project) {
+		Sprint sprint = new Sprint(project.getId(), project.getSprintLengthDays());
+		for (int i=1; i < project.getNoSprints(); i++) {
+			sprint.addSprint();
+		}
 		sprintDAO.create(sprint);
-		return sprint;
+	}
+	
+	@Transactional
+	public void completedSprint(int sprintId) {
+		Sprint sprint = sprintDAO.getSprint(sprintId);
+		if (sprint.getNext() != null) {
+			sprintDAO.update(sprint.getNext().start());	
+		}
 	}
 
 	@Transactional(readOnly = true)

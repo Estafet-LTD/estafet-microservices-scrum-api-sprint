@@ -5,8 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +16,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -54,6 +54,15 @@ public class Sprint {
 	private Integer noDays;
 
 	@JsonIgnore
+	@OneToOne(mappedBy = "previous", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Sprint next;
+	
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "PREVIOUS_SPRINT_ID", nullable = false, referencedColumnName = "SPRINT_ID")
+	private Sprint previous;
+
+	@JsonIgnore
 	@OneToMany(mappedBy = "storySprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Story> stories = new HashSet<Story>();
 
@@ -62,46 +71,56 @@ public class Sprint {
 		return this;
 	}
 
-	public Sprint start(int projectId, int days) {
-		return start(projectId, days, new ArrayList<Sprint>());
+	public Sprint() {
 	}
 
-	public Sprint start(Calendar today, int projectId, int days) {
-		return start(today, projectId, days, new ArrayList<Sprint>());
+	public Sprint(String startDate, Integer projectId, Integer noDays) {
+		this.projectId = projectId;
+		this.noDays = noDays;
+		this.startDate = startDate;
+		this.endDate = calculateEndDate();
+		this.number = 1;
 	}
 
-	public Sprint start(int projectId, int days, List<Sprint> projectSprints) {
-		return start(newCalendar(), projectId, days, projectSprints);
+	public Sprint addSprint() {
+		Sprint sprint = new Sprint(getNextWorkingDay(increment(endDate)), projectId, noDays);
+		sprint.previous = this;
+		this.next = sprint;
+		return sprint;
 	}
 
-	public Sprint start(Calendar today, int projectId, int days, List<Sprint> projectSprints) {
-		if ("Not Started".equals(status)) {
-			this.startDate = projectSprints.isEmpty() ? toCalendarString(today)
-					: getNextWorkingDay(increment(getLastSprint(projectSprints).endDate));
-			String day = getNextWorkingDay(startDate);
-			int i = 1;
-			while (i < days) {
-				day = getNextWorkingDay(increment(day));
-				i++;
-			}
-			this.endDate = day;
-			this.status = "Active";
-			this.noDays = days;
-			this.number = projectSprints.size() + 1;
-			this.projectId = projectId;
+	public Sprint getLastSprint() {
+		if (next != null) {
+			return next.getLastSprint();
+		} else {
 			return this;
 		}
-		throw new RuntimeException("Canot start a sprint that has already started.");
 	}
 
-	private Sprint getLastSprint(List<Sprint> projectSprints) {
-		Collections.sort(projectSprints, new Comparator<Sprint>() {
-			@Override
-			public int compare(Sprint o1, Sprint o2) {
-				return toCalendar(o2.getEndDate()).compareTo(toCalendar(o1.getEndDate()));
+	private String calculateEndDate() {
+		String day = getNextWorkingDay(startDate);
+		int i = 1;
+		while (i < noDays) {
+			day = getNextWorkingDay(increment(day));
+			i++;
+		}
+		return day;
+	}
+
+	public Sprint(Integer projectId, Integer noDays) {
+		this(toCalendarString(newCalendar()), projectId, noDays);
+	}
+
+	public Sprint start() {
+		if ("Not Started".equals(status)) {
+			if (previous.getStatus().equals("Active")) {
+				throw new RuntimeException("Cannot start a new sprint when one is active");
 			}
-		});
-		return projectSprints.get(0);
+			this.status = "Active";
+			return this;
+		} else {
+			throw new RuntimeException("Canot start a sprint that has already started.");	
+		}
 	}
 
 	public void addStory(Story story) {
@@ -122,6 +141,16 @@ public class Sprint {
 			}
 			status = "Completed";
 		}
+	}
+
+	@JsonIgnore
+	public Sprint getNext() {
+		return next;
+	}
+
+	@JsonIgnore
+	public Sprint getPrevious() {
+		return previous;
 	}
 
 	@JsonIgnore
@@ -237,6 +266,14 @@ public class Sprint {
 	public void setNumber(Integer number) {
 		this.number = number;
 	}
+	
+	public static Sprint fromJSON(String message) {
+		try {
+			return new ObjectMapper().readValue(message, Sprint.class);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public String toJSON() {
 		try {
@@ -247,7 +284,7 @@ public class Sprint {
 	}
 
 	public static Sprint getAPI() {
-		Sprint sprint = new Sprint().start(1, 5);
+		Sprint sprint = new Sprint(1, 5);
 		sprint.id = 1;
 		return sprint;
 	}
