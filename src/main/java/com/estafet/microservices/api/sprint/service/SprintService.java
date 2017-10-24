@@ -41,7 +41,7 @@ public class SprintService {
 		for (int i=1; i < project.getNoSprints(); i++) {
 			sprint.addSprint();
 		}
-		sprintDAO.create(sprint);
+		sprintDAO.create(sprint.start());
 	}
 	
 	@Transactional
