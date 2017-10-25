@@ -38,18 +38,14 @@ public class SprintService {
 	@Transactional
 	public void newProject(Project project) {
 		Sprint sprint = new Sprint(project.getId(), project.getSprintLengthDays());
-		for (int i=1; i < project.getNoSprints(); i++) {
-			sprint.addSprint();
-		}
 		sprintDAO.create(sprint.start());
 	}
 	
 	@Transactional
 	public void completedSprint(int sprintId) {
 		Sprint sprint = sprintDAO.getSprint(sprintId);
-		if (sprint.getNext() != null) {
-			sprintDAO.update(sprint.getNext().start());	
-		}
+		Sprint newSprint = sprint.addSprint().start();
+		sprintDAO.create(newSprint);
 	}
 
 	@Transactional(readOnly = true)

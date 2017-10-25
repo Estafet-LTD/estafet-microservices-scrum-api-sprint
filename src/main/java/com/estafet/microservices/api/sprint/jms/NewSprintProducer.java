@@ -15,8 +15,5 @@ public class NewSprintProducer {
 	public void sendMessage(Sprint sprint) {
 		jmsTemplate.setPubSubDomain(true);
 		jmsTemplate.convertAndSend("new.sprint.topic", sprint.toJSON());
-		if (sprint.getNext() != null) {
-			sendMessage(sprint.getNext());
-		}
 	}
 }
