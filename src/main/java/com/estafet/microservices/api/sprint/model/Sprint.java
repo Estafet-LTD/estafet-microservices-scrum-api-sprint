@@ -114,7 +114,7 @@ public class Sprint {
 
 	public Sprint start() {
 		if ("Not Started".equals(status)) {
-			if (previous.getStatus() != null && previous.getStatus().equals("Active")) {
+			if (previous != null && previous.getStatus().equals("Active")) {
 				throw new RuntimeException("Cannot start a new sprint when one is active");
 			}
 			this.status = "Active";
