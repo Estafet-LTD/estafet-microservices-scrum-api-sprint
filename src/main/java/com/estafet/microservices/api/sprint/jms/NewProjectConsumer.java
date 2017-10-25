@@ -21,7 +21,7 @@ public class NewProjectConsumer {
 
 	@JmsListener(destination = "new.project.topic", containerFactory = "myFactory")
 	public void onMessage(String message) {
-		ActiveSpan span = tracer.buildSpan("newProjectConsumer").startActive().log(message);
+		ActiveSpan span = tracer.activeSpan().log(message);
 		try {
 			sprintService.newProject(Project.fromJSON(message));
 		} finally {
