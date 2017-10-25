@@ -24,7 +24,7 @@ public class SprintTest {
 	
 	@Test
 	public void testChainSprintReferences() {
-		Sprint sprint1 = new Sprint("2017-10-20 00:00:00", 1, 3);
+		Sprint sprint1 = new Sprint(1, 3);
 		Sprint sprint2 = sprint1.addSprint();
 		Sprint sprint3 = sprint2.addSprint();
 		assertSame(sprint2, sprint1.getNext());
@@ -36,7 +36,7 @@ public class SprintTest {
 	
 	@Test
 	public void testChainSprintReferencesAddToRoot() {
-		Sprint sprint1 = new Sprint("2017-10-20 00:00:00", 1, 3);
+		Sprint sprint1 = new Sprint(1, 3);
 		Sprint sprint2 = sprint1.addSprint();
 		Sprint sprint3 = sprint1.addSprint();
 		assertSame(sprint2, sprint1.getNext());
@@ -44,6 +44,9 @@ public class SprintTest {
 		assertSame(sprint3, sprint2.getNext());
 		assertSame(sprint2, sprint3.getPrevious());
 		assertNull(sprint3.getNext());
+		assertEquals(1, sprint1.getNumber().intValue());
+		assertEquals(2, sprint2.getNumber().intValue());
+		assertEquals(3, sprint3.getNumber().intValue());
 	}
 	
 	@Test

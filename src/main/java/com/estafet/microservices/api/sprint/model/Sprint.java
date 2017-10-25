@@ -74,20 +74,29 @@ public class Sprint {
 	public Sprint() {
 	}
 
+
+	public Sprint(Integer projectId, Integer noDays) {
+		this(null, toCalendarString(newCalendar()), projectId, noDays);
+	}	
+	
 	public Sprint(String startDate, Integer projectId, Integer noDays) {
+		this(null, startDate, projectId, noDays);
+	}
+	
+	public Sprint(Sprint previous, String startDate, Integer projectId, Integer noDays) {
 		this.projectId = projectId;
 		this.noDays = noDays;
-		this.startDate = startDate;
+		this.startDate = previous == null ? startDate : getNextWorkingDay(increment(previous.endDate));
 		this.endDate = calculateEndDate();
-		this.number = 1;
+		this.number = previous == null ? 1 : previous.number + 1;
+		this.previous = previous;
+		if (previous != null) {
+			this.previous.next = this;	
+		}
 	}
 
 	public Sprint addSprint() {
-		Sprint sprint = new Sprint(getNextWorkingDay(increment(endDate)), projectId, noDays);
-		Sprint last = getLastSprint();
-		sprint.previous = last;
-		last.next = sprint;
-		return sprint;
+		return new Sprint(getLastSprint(), startDate, projectId, noDays);
 	}
 
 	private Sprint getLastSprint() {
@@ -106,10 +115,6 @@ public class Sprint {
 			i++;
 		}
 		return day;
-	}
-
-	public Sprint(Integer projectId, Integer noDays) {
-		this(toCalendarString(newCalendar()), projectId, noDays);
 	}
 
 	public Sprint start() {
