@@ -59,7 +59,7 @@ public class Sprint {
 	
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name = "PREVIOUS_SPRINT_ID", nullable = false, referencedColumnName = "SPRINT_ID")
+	@JoinColumn(name = "PREVIOUS_SPRINT_ID", referencedColumnName = "SPRINT_ID")
 	private Sprint previous;
 
 	@JsonIgnore
