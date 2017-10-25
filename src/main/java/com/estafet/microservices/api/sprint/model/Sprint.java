@@ -84,12 +84,13 @@ public class Sprint {
 
 	public Sprint addSprint() {
 		Sprint sprint = new Sprint(getNextWorkingDay(increment(endDate)), projectId, noDays);
-		sprint.previous = this;
-		this.next = sprint;
+		Sprint last = getLastSprint();
+		sprint.previous = last;
+		last.next = sprint;
 		return sprint;
 	}
 
-	public Sprint getLastSprint() {
+	private Sprint getLastSprint() {
 		if (next != null) {
 			return next.getLastSprint();
 		} else {

@@ -35,6 +35,18 @@ public class SprintTest {
 	}
 	
 	@Test
+	public void testChainSprintReferencesAddToRoot() {
+		Sprint sprint1 = new Sprint("2017-10-20 00:00:00", 1, 3);
+		Sprint sprint2 = sprint1.addSprint();
+		Sprint sprint3 = sprint1.addSprint();
+		assertSame(sprint2, sprint1.getNext());
+		assertNull(sprint1.getPrevious());
+		assertSame(sprint3, sprint2.getNext());
+		assertSame(sprint2, sprint3.getPrevious());
+		assertNull(sprint3.getNext());
+	}
+	
+	@Test
 	public void testChainSprintDates() {
 		Sprint sprint1 = new Sprint("2017-10-20 00:00:00", 1, 3);
 		Sprint sprint2 = sprint1.addSprint();
