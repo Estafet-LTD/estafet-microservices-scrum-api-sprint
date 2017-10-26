@@ -3,10 +3,15 @@ package com.estafet.microservices.api.sprint.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.estafet.microservices.api.sprint.messages.CalculateSprints;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
@@ -39,6 +44,12 @@ public class SprintController {
 	@GetMapping(value = "/sprint/{id}/day")
 	public String getSprintDay(@PathVariable int id) {
 		return sprintService.getSprintDay(id);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@PostMapping("/calculate-sprints")
+	public ResponseEntity calculateSprints(@RequestBody CalculateSprints message) {
+		return new ResponseEntity(sprintService.calculateSprints(message), HttpStatus.OK);
 	}
 	
 }

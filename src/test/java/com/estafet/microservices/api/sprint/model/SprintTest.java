@@ -35,6 +35,18 @@ public class SprintTest {
 	}
 	
 	@Test
+	public void testCalculateSprint() {
+		List<Sprint> sprints = Sprint.calculateSprints("2017-10-20 00:00:00", 1, 3, 3);
+		assertEquals(3, sprints.size());
+		assertEquals("2017-10-20 00:00:00", sprints.get(0).getStartDate());
+		assertEquals("2017-10-24 00:00:00", sprints.get(0).getEndDate());
+		assertEquals("2017-10-25 00:00:00", sprints.get(1).getStartDate());
+		assertEquals("2017-10-27 00:00:00", sprints.get(1).getEndDate());
+		assertEquals("2017-10-30 00:00:00", sprints.get(2).getStartDate());
+		assertEquals("2017-11-01 00:00:00", sprints.get(2).getEndDate());
+	}
+	
+	@Test
 	public void testChainSprintReferencesAddToRoot() {
 		Sprint sprint1 = new Sprint(1, 3);
 		Sprint sprint2 = sprint1.addSprint();

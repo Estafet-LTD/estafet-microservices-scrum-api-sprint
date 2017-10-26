@@ -56,7 +56,7 @@ public class Sprint {
 	@JsonIgnore
 	@OneToOne(mappedBy = "previous", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Sprint next;
-	
+
 	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name = "PREVIOUS_SPRINT_ID", referencedColumnName = "SPRINT_ID")
@@ -74,15 +74,14 @@ public class Sprint {
 	public Sprint() {
 	}
 
-
 	public Sprint(Integer projectId, Integer noDays) {
 		this(null, toCalendarString(newCalendar()), projectId, noDays);
-	}	
-	
+	}
+
 	public Sprint(String startDate, Integer projectId, Integer noDays) {
 		this(null, startDate, projectId, noDays);
 	}
-	
+
 	public Sprint(Sprint previous, String startDate, Integer projectId, Integer noDays) {
 		this.projectId = projectId;
 		this.noDays = noDays;
@@ -91,7 +90,7 @@ public class Sprint {
 		this.number = previous == null ? 1 : previous.number + 1;
 		this.previous = previous;
 		if (previous != null) {
-			this.previous.next = this;	
+			this.previous.next = this;
 		}
 	}
 
@@ -102,6 +101,14 @@ public class Sprint {
 	private Sprint getLastSprint() {
 		if (next != null) {
 			return next.getLastSprint();
+		} else {
+			return this;
+		}
+	}
+
+	private Sprint getFirstSprint() {
+		if (previous != null) {
+			return previous.getLastSprint();
 		} else {
 			return this;
 		}
@@ -125,7 +132,7 @@ public class Sprint {
 			this.status = "Active";
 			return this;
 		} else {
-			throw new RuntimeException("Canot start a sprint that has already started.");	
+			throw new RuntimeException("Canot start a sprint that has already started.");
 		}
 	}
 
@@ -272,7 +279,32 @@ public class Sprint {
 	public void setNumber(Integer number) {
 		this.number = number;
 	}
-	
+
+	public static List<Sprint> calculateSprints(int projectId, int noDays, int noSprints) {
+		return calculateSprints(toCalendarString(newCalendar()), projectId, noDays, noSprints);
+	}
+
+	public static List<Sprint> calculateSprints(String today, int projectId, int noDays, int noSprints) {
+		Sprint sprint = new Sprint(today, projectId, noDays);
+		for (int i = 1; i < noSprints; i++) {
+			sprint.addSprint();
+		}
+		return sprint.toList();
+	}
+
+	public List<Sprint> toList() {
+		return toList(getFirstSprint(), new ArrayList<Sprint>());
+	}
+
+	private List<Sprint> toList(Sprint sprint, List<Sprint> sprints) {
+		sprints.add(sprint);
+		if (sprint.next != null) {
+			return toList(sprint.next, sprints);
+		} else {
+			return sprints;
+		}
+	}
+
 	public static Sprint fromJSON(String message) {
 		try {
 			return new ObjectMapper().readValue(message, Sprint.class);

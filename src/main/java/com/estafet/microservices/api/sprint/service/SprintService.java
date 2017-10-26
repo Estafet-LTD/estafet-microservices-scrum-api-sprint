@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.estafet.microservices.api.sprint.dao.SprintDAO;
+import com.estafet.microservices.api.sprint.messages.CalculateSprints;
 import com.estafet.microservices.api.sprint.model.Project;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.model.Story;
@@ -34,13 +35,13 @@ public class SprintService {
 			sprintDAO.update(sprint);
 		}
 	}
-	
+
 	@Transactional
 	public void newProject(Project project) {
 		Sprint sprint = new Sprint(project.getId(), project.getSprintLengthDays());
 		sprintDAO.create(sprint.start());
 	}
-	
+
 	@Transactional
 	public void completedSprint(int sprintId) {
 		Sprint sprint = sprintDAO.getSprint(sprintId);
@@ -66,6 +67,10 @@ public class SprintService {
 	@Transactional(readOnly = true)
 	public String getSprintDay(int sprintId) {
 		return sprintDAO.getSprint(sprintId).getSprintDay();
+	}
+
+	public List<Sprint> calculateSprints(CalculateSprints message) {
+		return Sprint.calculateSprints(message.getProjectId(), message.getNoDays(), message.getNoSprints());
 	}
 
 }
