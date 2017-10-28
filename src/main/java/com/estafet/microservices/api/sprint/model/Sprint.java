@@ -54,7 +54,7 @@ public class Sprint {
 	private Integer noDays;
 
 	@JsonIgnore
-	@OneToOne(mappedBy = "previous", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "previous", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Sprint next;
 
 	@JsonIgnore
