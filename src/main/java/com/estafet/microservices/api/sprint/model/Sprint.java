@@ -61,7 +61,7 @@ public class Sprint {
 	private Sprint previous;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "storySprint", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "storySprint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Story> stories = new HashSet<Story>();
 
 	public Sprint update(Sprint newSprint) {
