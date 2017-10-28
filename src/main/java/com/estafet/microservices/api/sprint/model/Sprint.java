@@ -16,11 +16,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,12 +53,11 @@ public class Sprint {
 	private Integer noDays;
 
 	@JsonIgnore
-	@OneToOne(mappedBy = "previous", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Transient
 	private Sprint next;
 
 	@JsonIgnore
-	@OneToOne
-	@JoinColumn(name = "PREVIOUS_SPRINT_ID", referencedColumnName = "SPRINT_ID")
+	@Transient
 	private Sprint previous;
 
 	@JsonIgnore
