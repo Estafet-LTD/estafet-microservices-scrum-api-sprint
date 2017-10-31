@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
-import io.opentracing.ActiveSpan;
 import io.opentracing.Tracer;
 
 @Component
@@ -21,14 +20,13 @@ public class CompletedSprintConsumer {
 
 	@JmsListener(destination = "update.sprint.topic", containerFactory = "myFactory")
 	public void onMessage(String message) {
-		ActiveSpan span = tracer.buildSpan("completedSprintConsumer").startActive().log(message);
 		Sprint sprint = Sprint.fromJSON(message);
 		try {
 			if (sprint.getStatus().equals("Completed")) {
 				sprintService.completedSprint(sprint.getId());
 			}
 		} finally {
-			span.close();
+			tracer.activeSpan().close();
 		}
 	}
 

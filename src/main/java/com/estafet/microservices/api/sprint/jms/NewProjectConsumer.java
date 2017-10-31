@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import com.estafet.microservices.api.sprint.model.Project;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
-import io.opentracing.ActiveSpan;
 import io.opentracing.Tracer;
 
 @Component
@@ -21,11 +20,10 @@ public class NewProjectConsumer {
 
 	@JmsListener(destination = "new.project.topic", containerFactory = "myFactory")
 	public void onMessage(String message) {
-		ActiveSpan span = tracer.activeSpan().log(message);
 		try {
 			sprintService.newProject(Project.fromJSON(message));
 		} finally {
-			span.close();
+			tracer.activeSpan().close();
 		}
 	}
 
