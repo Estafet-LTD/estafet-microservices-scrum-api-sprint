@@ -1,6 +1,6 @@
 ---
 # Define the name of the microservice
-microservice: sprint-board
+microservice: sprint-api
 
 create_ddl: create-sprint-api-db.ddl
 drop_ddl: drop-sprint-api-db.ddl
