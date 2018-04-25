@@ -1,46 +1,10 @@
 ---
-- include: postgres-vars.yml 
-- include: a-mq-vars.yml  
-
 - name: include the variables for this microservice      
   include_vars:
     file: microservice-vars.yml   
-  
-- name: Copy ddl to PostgreSQL Pod
-  shell: 'oc rsync --no-perms=true --include="*.ddl" --exclude="*" ./ {{db_pod}}:/tmp'
-  register: command_result
-  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
-  changed_when: "'exists' not in command_result.stderr"
-  tags:
-    - openshift
-    - postgresql
 
-- name: Create the microservice databases on PostgreSQL Pod
-  shell: 'oc exec {{db_pod}} -- /bin/sh -i -c "createdb {{ microservice }}"'
-  register: command_result
-  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
-  changed_when: "'exists' not in command_result.stderr"
-  tags:
-    - openshift
-    - postgresql
-        
-- name: Execute Drop ddl on PostgreSQL Pod
-  shell: 'oc exec {{db_pod}} -- /bin/sh -i -c "psql -d {{ microservice }} -U postgres -f /tmp/{{ drop_ddl }}"'
-  register: command_result
-  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
-  changed_when: "'exists' not in command_result.stderr"
-  tags:
-    - openshift
-    - postgresql
-
-- name: Execute Create ddl on PostgreSQL Pod
-  shell: 'oc exec {{db_pod}} -- /bin/sh -i -c "psql -d {{ microservice }} -U postgres -f /tmp/{{ create_ddl }}"'
-  register: command_result
-  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
-  changed_when: "'exists' not in command_result.stderr"
-  tags:
-    - openshift
-    - postgresql
+- include: postgres.yml 
+- include: a-mq-vars.yml  
 
 - set_fact: service_envs="JAEGER_SAMPLER_TYPE=const -e JAEGER_SAMPLER_PARAM=1 -e JAEGER_SAMPLER_MANAGER_HOST_PORT=jaeger-agent.microservices-scrum.svc:5778 -e JAEGER_AGENT_HOST=jaeger-agent.microservices-scrum.svc"
   
@@ -66,4 +30,6 @@
   failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
   changed_when: "'exists' not in command_result.stderr"
   tags:
-    - openshift         
+    - openshift
+    
+             
