@@ -1,0 +1,35 @@
+---
+- name: include the variables for this microservice      
+  include_vars:
+    file: microservice-vars.yml   
+
+- include: postgres.yml 
+- include: a-mq-vars.yml  
+
+- set_fact: service_envs="JAEGER_SAMPLER_TYPE=const -e JAEGER_SAMPLER_PARAM=1 -e JAEGER_SAMPLER_MANAGER_HOST_PORT=jaeger-agent.microservices-scrum.svc:5778 -e JAEGER_AGENT_HOST=jaeger-agent.microservices-scrum.svc"
+  
+- name: Create the microservices application from the source to image builder for db application
+  shell: 'oc new-app redhat-openjdk18-openshift~{{ github }}/{{ repo }} --name={{ microservice }} -e {{ db_url_env }}=jdbc:postgresql://{{ db_ip }}:5432/{{ microservice }} -e {{ db_user_env }}=postgres -e {{ db_db_env }}=welcome1 -e JBOSS_A_MQ_BROKER_URL=tcp://{{ broker_ip }}:61616 -e JBOSS_A_MQ_BROKER_USER={{ broker_pod_user }} -e JBOSS_A_MQ_BROKER_PASSWORD={{ broker_pod_password }} -e {{ service_envs }} && sleep 180'
+  register: command_result
+  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'exists' not in command_result.stderr"
+  tags:
+    - openshift         
+
+- name: Set the readiness probe 
+  shell: "oc set probe dc/{{ microservice }} --readiness --get-url=http://:8080/api --initial-delay-seconds=60"
+  register: command_result
+  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'exists' not in command_result.stderr"
+  tags:
+    - openshift
+
+- name: Configure the resource limits for this microservice
+  shell: "oc set resources dc {{ microservice }} -c={{ microservice }} --limits=cpu={{ cpu_max }},memory={{ memory_max }} --requests=cpu={{ cpu_min }},memory={{ memory_min }}"
+  register: command_result
+  failed_when: "'exists' not in command_result.stderr and command_result.rc != 0"
+  changed_when: "'exists' not in command_result.stderr"
+  tags:
+    - openshift
+    
+             
