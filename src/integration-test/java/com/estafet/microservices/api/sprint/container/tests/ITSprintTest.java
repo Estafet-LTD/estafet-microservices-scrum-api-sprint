@@ -9,7 +9,6 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,7 +40,6 @@ public class ITSprintTest {
 		newSprintTopicConsumer.closeConnection();
 	}
 
-	@Ignore
 	@Test
 	public void testGetAPI() {
 		get("/api").then()
@@ -51,7 +49,6 @@ public class ITSprintTest {
 			.body("status", is("Not Started"));
 	}
 
-	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprint() {
@@ -65,7 +62,6 @@ public class ITSprintTest {
 			.body("projectId", is(1));
 	}
 
-	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetProjectSprints() {
@@ -78,7 +74,6 @@ public class ITSprintTest {
 			.body("status", hasItems("Active", "Completed"));
 	}
 
-	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprintDays() {
@@ -87,7 +82,6 @@ public class ITSprintTest {
 			.body(is("[\"2017-10-02 00:00:00\",\"2017-10-03 00:00:00\",\"2017-10-04 00:00:00\",\"2017-10-05 00:00:00\",\"2017-10-06 00:00:00\"]"));
 	}
 	
-	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprintDay() {
@@ -96,7 +90,6 @@ public class ITSprintTest {
 			.body(is("2017-10-02 00:00:00"));
 	}
 
-	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testCalculateSprints() {
