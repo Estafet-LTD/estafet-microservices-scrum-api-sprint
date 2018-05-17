@@ -42,7 +42,7 @@ public class ITSprintTest {
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
 			.body("number", is(1))
-			.body("status", is("Completed"));
+			.body("status", is("Not Started"));
 	}
 
 	@Test
@@ -75,11 +75,7 @@ public class ITSprintTest {
 	public void testGetSprintDays() {
 		get("/sprint/1000/days").then()
 			.statusCode(HttpURLConnection.HTTP_OK)
-			.body(hasItems(	"2017-10-02 00:00:00",
-							"2017-10-03 00:00:00",
-							"2017-10-04 00:00:00",
-							"2017-10-05 00:00:00",
-							"2017-10-06 00:00:00"));
+			.body(is("[\"2017-10-02 00:00:00\",\"2017-10-03 00:00:00\",\"2017-10-04 00:00:00\",\"2017-10-05 00:00:00\",\"2017-10-06 00:00:00\"]"));
 	}
 
 	@Test
