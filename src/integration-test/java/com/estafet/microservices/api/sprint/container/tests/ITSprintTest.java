@@ -112,7 +112,7 @@ public class ITSprintTest {
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testConsumeNewProject() {
 		NewProjectTopicProducer.send("{\"id\":2000,\"title\":\"My Project #1\",\"noSprints\":3,\"sprintLengthDays\":5}");
-		get("/sprint/1000").then()
+		get("/sprint/1").then()
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
 			.body("number", is(1))
