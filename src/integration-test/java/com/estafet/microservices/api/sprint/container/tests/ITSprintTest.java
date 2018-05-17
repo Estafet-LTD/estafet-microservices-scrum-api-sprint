@@ -117,12 +117,6 @@ public class ITSprintTest {
 		assertThat(sprint.getNumber(), is(1));
 		assertThat(sprint.getStatus(), is("Active"));
 		assertThat(sprint.getProjectId(), is(2000));
-		get("/project/2000/sprints").then()
-			.body("id", hasSize(3))
-			.body("startDate", hasSize(3))
-			.body("endDate", hasSize(3))
-			.body("number", hasSize(3))
-			.body("status", hasItems("Active", "Not Started", "Not Started"));
 	}
 
 }
