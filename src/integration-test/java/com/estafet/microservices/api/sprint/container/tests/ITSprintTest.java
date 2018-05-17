@@ -41,8 +41,6 @@ public class ITSprintTest {
 		get("/api").then()
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
-			.body("startDate", is("2017-10-01 00:00:00"))
-			.body("endDate", is("2017-10-06 00:00:00"))
 			.body("number", is(1))
 			.body("status", is("Completed"));
 	}
@@ -75,19 +73,40 @@ public class ITSprintTest {
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprintDays() {
-		fail("Not yet implemented");
+		get("/sprint/1000/days").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body(hasItems(	"2017-10-02 00:00:00",
+							"2017-10-03 00:00:00",
+							"2017-10-04 00:00:00",
+							"2017-10-05 00:00:00",
+							"2017-10-06 00:00:00"));
 	}
 
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprintDay() {
-		fail("Not yet implemented");
+		get("/sprint/1000/day").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body(is("2017-10-02 00:00:00"));
 	}
 
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testCalculateSprints() {
-		fail("Not yet implemented");
+		given().contentType(ContentType.JSON)
+			.body("{\r\n" + 
+					"	\"projectId\": 22,\r\n" + 
+					"	\"noDays\": 3,\r\n" + 
+					"	\"noSprints\": 3\r\n" + 
+					"}")
+		.when()
+			.post("/calculate-sprints")
+		.then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body("startDate", hasSize(3))
+			.body("endDate", hasSize(3))
+			.body("number", hasItems(1, 2, 3));
+
 	}
 
 }
