@@ -16,6 +16,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.estafet.microservices.api.sprint.model.Sprint;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -27,6 +28,8 @@ import io.restassured.http.ContentType;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 public class ITSprintTest {
 
+	NewSprintTopicConsumer newSprintTopicConsumer = new NewSprintTopicConsumer();
+	
 	@Before
 	public void before() {
 		RestAssured.baseURI = System.getenv("SPRINT_API_SERVICE_URI");
@@ -34,6 +37,7 @@ public class ITSprintTest {
 
 	@After
 	public void after() {
+		newSprintTopicConsumer.closeConnection();
 	}
 
 	@Test
@@ -102,7 +106,23 @@ public class ITSprintTest {
 			.body("startDate", hasSize(3))
 			.body("endDate", hasSize(3))
 			.body("number", hasItems(1, 2, 3));
-
+	}
+	
+	@Test
+	@DatabaseSetup("ITSprintTest-data.xml")
+	public void testConsumeNewProject() {
+		NewProjectTopicProducer.send("{\"id\":2000,\"title\":\"My Project #1\",\"noSprints\":3,\"sprintLengthDays\":5}");
+		get("/sprint/1000").then()
+			.statusCode(HttpURLConnection.HTTP_OK)
+			.body("id", is(1))
+			.body("number", is(1))
+			.body("status", is("Active"))
+			.body("projectId", is(2000));
+		Sprint sprint = newSprintTopicConsumer.consume();
+		assertThat(sprint.getId(), is(1));
+		assertThat(sprint.getNumber(), is(1));
+		assertThat(sprint.getStatus(), is("Active"));
+		assertThat(sprint.getProjectId(), is(2000));
 	}
 
 }
