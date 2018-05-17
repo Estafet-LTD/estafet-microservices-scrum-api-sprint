@@ -112,12 +112,12 @@ public class ITSprintTest {
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testConsumeNewProject() {
 		NewProjectTopicProducer.send("{\"id\":2000,\"title\":\"My Project #1\",\"noSprints\":3,\"sprintLengthDays\":5}");
-		get("/sprint/1").then()
-			.statusCode(HttpURLConnection.HTTP_OK)
-			.body("id", is(1))
-			.body("number", is(1))
-			.body("status", is("Active"))
-			.body("projectId", is(2000));
+		get("/project/2000/sprints").then()
+			.body("id", hasSize(3))
+			.body("startDate", hasSize(3))
+			.body("endDate", hasSize(3))
+			.body("number", hasSize(3))
+			.body("status", hasItems("Active", "Not Started", "Not Started"));
 		Sprint sprint = newSprintTopicConsumer.consume();
 		assertThat(sprint.getId(), is(1));
 		assertThat(sprint.getNumber(), is(1));
