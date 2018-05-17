@@ -33,9 +33,9 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="${PROJECT_API_JDBC_URL}" />
-		<property name="username" value="${PROJECT_API_DB_USER}" />
-		<property name="password" value="${PROJECT_API_DB_PASSWORD}" />
+		<property name="url" value="${SPRINT_API_JDBC_URL}" />
+		<property name="username" value="${SPRINT_API_DB_USER}" />
+		<property name="password" value="${SPRINT_API_DB_PASSWORD}" />
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
