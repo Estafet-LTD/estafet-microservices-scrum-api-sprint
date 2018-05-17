@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,6 +41,7 @@ public class ITSprintTest {
 		newSprintTopicConsumer.closeConnection();
 	}
 
+	@Ignore
 	@Test
 	public void testGetAPI() {
 		get("/api").then()
@@ -49,6 +51,7 @@ public class ITSprintTest {
 			.body("status", is("Not Started"));
 	}
 
+	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprint() {
@@ -62,6 +65,7 @@ public class ITSprintTest {
 			.body("projectId", is(1));
 	}
 
+	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetProjectSprints() {
@@ -74,6 +78,7 @@ public class ITSprintTest {
 			.body("status", hasItems("Active", "Completed"));
 	}
 
+	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprintDays() {
@@ -81,7 +86,8 @@ public class ITSprintTest {
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body(is("[\"2017-10-02 00:00:00\",\"2017-10-03 00:00:00\",\"2017-10-04 00:00:00\",\"2017-10-05 00:00:00\",\"2017-10-06 00:00:00\"]"));
 	}
-
+	
+	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testGetSprintDay() {
@@ -90,6 +96,7 @@ public class ITSprintTest {
 			.body(is("2017-10-02 00:00:00"));
 	}
 
+	@Ignore
 	@Test
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testCalculateSprints() {
@@ -112,17 +119,17 @@ public class ITSprintTest {
 	@DatabaseSetup("ITSprintTest-data.xml")
 	public void testConsumeNewProject() {
 		NewProjectTopicProducer.send("{\"id\":2000,\"title\":\"My Project #1\",\"noSprints\":3,\"sprintLengthDays\":5}");
+		Sprint sprint = newSprintTopicConsumer.consume();
+		assertThat(sprint.getId(), is(1));
+		assertThat(sprint.getNumber(), is(1));
+		assertThat(sprint.getStatus(), is("Active"));
+		assertThat(sprint.getProjectId(), is(2000));
 		get("/project/2000/sprints").then()
 			.body("id", hasSize(3))
 			.body("startDate", hasSize(3))
 			.body("endDate", hasSize(3))
 			.body("number", hasSize(3))
 			.body("status", hasItems("Active", "Not Started", "Not Started"));
-		Sprint sprint = newSprintTopicConsumer.consume();
-		assertThat(sprint.getId(), is(1));
-		assertThat(sprint.getNumber(), is(1));
-		assertThat(sprint.getStatus(), is("Active"));
-		assertThat(sprint.getProjectId(), is(2000));
 	}
 
 }
