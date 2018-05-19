@@ -46,10 +46,9 @@ public class ITSprintTest {
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
 			.body("startDate", notNullValue())
+			.body("endDate", notNullValue())
 			.body("number", is(1))
-			.body("status", is("Not Started"))
-			.body("sprintDays.id", hasItems(1, 2, 3, 4, 5))
-			.body("sprintDays.dayNo", hasItems(1, 2, 3, 4, 5));
+			.body("status", is("Not Started"));
 	}
 
 	@Test

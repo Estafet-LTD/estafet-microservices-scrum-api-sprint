@@ -2,8 +2,10 @@ package com.estafet.microservices.api.sprint.jms;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
+import com.estafet.microservices.api.sprint.event.MessageEventHandler;
 import com.estafet.microservices.api.sprint.model.Project;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
@@ -17,13 +19,20 @@ public class NewProjectConsumer {
 
 	@Autowired
 	private SprintService sprintService;
+	
+	@Autowired
+	private MessageEventHandler messageEventHandler;
 
 	@JmsListener(destination = "new.project.topic", containerFactory = "myFactory")
-	public void onMessage(String message) {
+	public void onMessage(String message, @Header("message.event.interaction.reference") String reference) {
 		try {
-			sprintService.newProject(Project.fromJSON(message));
+			if (messageEventHandler.isValid("new.sprint.topic", reference)) {
+				sprintService.newProject(Project.fromJSON(message));	
+			}
 		} finally {
-			tracer.activeSpan().close();
+			if (tracer.activeSpan() != null) {
+				tracer.activeSpan().close();	
+			}
 		}
 	}
 

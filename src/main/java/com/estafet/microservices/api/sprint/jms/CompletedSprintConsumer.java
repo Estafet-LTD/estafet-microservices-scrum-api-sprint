@@ -2,8 +2,10 @@ package com.estafet.microservices.api.sprint.jms;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
+import com.estafet.microservices.api.sprint.event.MessageEventHandler;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
@@ -17,16 +19,21 @@ public class CompletedSprintConsumer {
 
 	@Autowired
 	private SprintService sprintService;
+	
+	@Autowired
+	private MessageEventHandler messageEventHandler;
 
 	@JmsListener(destination = "update.sprint.topic", containerFactory = "myFactory")
-	public void onMessage(String message) {
+	public void onMessage(String message, @Header("message.event.interaction.reference") String reference) {
 		Sprint sprint = Sprint.fromJSON(message);
 		try {
-			if (sprint.getStatus().equals("Completed")) {
+			if (messageEventHandler.isValid("new.sprint.topic", reference) && sprint.getStatus().equals("Completed")) {
 				sprintService.completedSprint(sprint.getId());
 			}
 		} finally {
-			tracer.activeSpan().close();
+			if (tracer.activeSpan() != null) {
+				tracer.activeSpan().close();	
+			}
 		}
 	}
 

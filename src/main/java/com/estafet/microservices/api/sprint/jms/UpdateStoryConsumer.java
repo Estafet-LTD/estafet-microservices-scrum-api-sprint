@@ -2,9 +2,11 @@ package com.estafet.microservices.api.sprint.jms;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.estafet.microservices.api.sprint.event.MessageEventHandler;
 import com.estafet.microservices.api.sprint.model.Story;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
@@ -18,14 +20,21 @@ public class UpdateStoryConsumer {
 	
 	@Autowired
 	private SprintService sprintService;
+	
+	@Autowired
+	private MessageEventHandler messageEventHandler;
 
 	@Transactional
 	@JmsListener(destination = "update.story.topic", containerFactory = "myFactory")
-	public void onMessage(String message) {
+	public void onMessage(String message, @Header("message.event.interaction.reference") String reference) {
 		try {
-			sprintService.updateStory(Story.fromJSON(message));
+			if (messageEventHandler.isValid("new.sprint.topic", reference)) {
+				sprintService.updateStory(Story.fromJSON(message));
+			}
 		} finally {
-			tracer.activeSpan().close();
+			if (tracer.activeSpan() != null) {
+				tracer.activeSpan().close();	
+			}
 		}
 	}
 
