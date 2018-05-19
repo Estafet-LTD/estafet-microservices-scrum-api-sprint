@@ -45,8 +45,11 @@ public class ITSprintTest {
 		get("/api").then()
 			.statusCode(HttpURLConnection.HTTP_OK)
 			.body("id", is(1))
+			.body("startDate", is("2017-10-01 00:00:00"))
 			.body("number", is(1))
-			.body("status", is("Not Started"));
+			.body("status", is("Not Started"))
+			.body("sprintDays.id", hasItems(1, 2, 3, 4, 5))
+			.body("sprintDays.dayNo", hasItems(1, 2, 3, 4, 5));
 	}
 
 	@Test

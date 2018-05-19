@@ -1,5 +1,7 @@
 package com.estafet.microservices.api.sprint.container.tests;
 
+import java.util.UUID;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -25,6 +27,7 @@ public abstract class TopicProducer {
 			Topic topic = createTopic();
 			MessageProducer messageProducer = session.createProducer(topic);
 			TextMessage textMessage = session.createTextMessage(message);
+			textMessage.setStringProperty("message.event.interaction.reference", UUID.randomUUID().toString());
 			messageProducer.send(textMessage);
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
