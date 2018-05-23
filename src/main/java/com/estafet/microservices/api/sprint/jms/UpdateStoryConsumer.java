@@ -15,6 +15,8 @@ import io.opentracing.Tracer;
 @Component
 public class UpdateStoryConsumer {
 
+	public final static String TOPIC = "update.story.topic";
+	
 	@Autowired
 	private Tracer tracer;
 	
@@ -25,10 +27,10 @@ public class UpdateStoryConsumer {
 	private MessageEventHandler messageEventHandler;
 
 	@Transactional
-	@JmsListener(destination = "update.story.topic", containerFactory = "myFactory")
+	@JmsListener(destination = TOPIC, containerFactory = "myFactory")
 	public void onMessage(String message, @Header("message.event.interaction.reference") String reference) {
 		try {
-			if (messageEventHandler.isValid("new.sprint.topic", reference)) {
+			if (messageEventHandler.isValid(TOPIC, reference)) {
 				sprintService.updateStory(Story.fromJSON(message));
 			}
 		} finally {

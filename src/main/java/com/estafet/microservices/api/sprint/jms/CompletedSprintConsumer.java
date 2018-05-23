@@ -14,6 +14,8 @@ import io.opentracing.Tracer;
 @Component
 public class CompletedSprintConsumer {
 
+	public final static String TOPIC = "update.sprint.topic";
+	
 	@Autowired
 	private Tracer tracer;
 
@@ -23,11 +25,11 @@ public class CompletedSprintConsumer {
 	@Autowired
 	private MessageEventHandler messageEventHandler;
 
-	@JmsListener(destination = "update.sprint.topic", containerFactory = "myFactory")
+	@JmsListener(destination = TOPIC, containerFactory = "myFactory")
 	public void onMessage(String message, @Header("message.event.interaction.reference") String reference) {
 		Sprint sprint = Sprint.fromJSON(message);
 		try {
-			if (messageEventHandler.isValid("new.sprint.topic", reference) && sprint.getStatus().equals("Completed")) {
+			if (messageEventHandler.isValid(TOPIC, reference) && sprint.getStatus().equals("Completed")) {
 				sprintService.completedSprint(sprint.getId());
 			}
 		} finally {
