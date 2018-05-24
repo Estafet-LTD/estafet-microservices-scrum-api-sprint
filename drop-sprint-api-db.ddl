@@ -1,4 +1,4 @@
-alter table STORY drop constraint FKgsgk46gsij1um5uo8h16kf5s9;
+alter table STORY drop constraint STORY_TO_SPRINT_FK;
 drop table if exists MESSAGE_EVENT cascade;
 drop table if exists SPRINT cascade;
 drop table if exists STORY cascade;

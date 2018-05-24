@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -31,7 +32,7 @@ public class Story {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "SPRINT_ID", nullable = false, referencedColumnName = "SPRINT_ID")
+	@JoinColumn(name = "SPRINT_ID", nullable = false, referencedColumnName = "SPRINT_ID", foreignKey = @ForeignKey(name = "STORY_TO_SPRINT_FK"))
 	private Sprint storySprint;
 
 	public Story update(Story newStory) {
