@@ -46,7 +46,7 @@ public class SprintDAO {
 	}
 
 	public List<Sprint> getProjectSprints(Integer projectId) {
-		return entityManager.createQuery("select s from Sprint s where s.projectId = " + projectId, Sprint.class)
+		return entityManager.createQuery("select s from CalculatedSprint s where s.projectId = " + projectId, Sprint.class)
 				.getResultList();
 	}
 

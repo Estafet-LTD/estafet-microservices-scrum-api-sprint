@@ -1,10 +1,7 @@
 package com.estafet.microservices.api.sprint.model;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +18,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import static com.estafet.microservices.api.sprint.date.DateHelper.*;
+
+import com.estafet.microservices.api.sprint.date.DateHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -166,75 +166,12 @@ public class Sprint {
 
 	@JsonIgnore
 	public String getSprintDay() {
-		String today = toCalendarString(newCalendar());
-		for (String day : getSprintDays()) {
-			if (day.equals(today)) {
-				return today;
-			}
-		}
-		return getSprintDays().get(0);
+		return DateHelper.getSprintDay(startDate, noDays);
 	}
 
 	@JsonIgnore
 	public List<String> getSprintDays() {
-		List<String> workingDays = new ArrayList<String>(noDays);
-		String day = getNextWorkingDay(startDate);
-		int i = 0;
-		while (i < noDays) {
-			workingDays.add(day);
-			day = getNextWorkingDay(increment(day));
-			i++;
-		}
-		return workingDays;
-	}
-
-	private String increment(String day) {
-		Calendar cal = toCalendar(day);
-		cal.add(Calendar.DAY_OF_MONTH, 1);
-		return toCalendarString(cal);
-	}
-
-	private String getNextWorkingDay(String day) {
-		return toCalendarString(getWorkingDay(toCalendar(day)));
-	}
-
-	private Calendar getWorkingDay(Calendar day) {
-		if (isWorkingDay(day)) {
-			return day;
-		} else {
-			day.add(Calendar.DAY_OF_MONTH, 1);
-			return getWorkingDay(day);
-		}
-	}
-
-	static Calendar toCalendar(String calendarString) {
-		try {
-			Calendar cal = newCalendar();
-			cal.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(calendarString));
-			return cal;
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	static String toCalendarString(Calendar calendar) {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
-	}
-
-	private static boolean isWorkingDay(Calendar cal) {
-		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-		if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)
-			return false;
-		return true;
-	}
-
-	static Calendar newCalendar() {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		return cal;
+		return DateHelper.getSprintDays(startDate, noDays);
 	}
 
 	public Sprint setId(Integer id) {
@@ -278,18 +215,6 @@ public class Sprint {
 		this.number = number;
 	}
 
-	public static List<Sprint> calculateSprints(int projectId, int noDays, int noSprints) {
-		return calculateSprints(toCalendarString(newCalendar()), projectId, noDays, noSprints);
-	}
-
-	public static List<Sprint> calculateSprints(String today, int projectId, int noDays, int noSprints) {
-		Sprint sprint = new Sprint(today, projectId, noDays);
-		for (int i = 1; i < noSprints; i++) {
-			sprint.addSprint();
-		}
-		return sprint.toList();
-	}
-
 	public List<Sprint> toList() {
 		return toList(getFirstSprint(), new ArrayList<Sprint>());
 	}
@@ -317,6 +242,18 @@ public class Sprint {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static List<Sprint> calculateSprints(String today, int projectId, int noDays, int noSprints) {
+		Sprint sprint = new Sprint(today, projectId, noDays);
+		for (int i = 1; i < noSprints; i++) {
+			sprint.addSprint();
+		}
+		return sprint.toList();
+	}
+
+	public static List<Sprint> calculateSprints(int projectId, int noDays, int noSprints) {
+		return calculateSprints(toCalendarString(newCalendar()), projectId, noDays, noSprints);
 	}
 
 	public static Sprint getAPI() {
