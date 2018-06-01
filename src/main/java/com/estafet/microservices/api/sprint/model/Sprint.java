@@ -18,9 +18,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import static com.estafet.microservices.api.sprint.date.DateHelper.*;
+import static com.estafet.microservices.scrum.lib.commons.date.DateHelper.*;
 
-import com.estafet.microservices.api.sprint.date.DateHelper;
+import com.estafet.microservices.scrum.lib.commons.date.DateHelper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

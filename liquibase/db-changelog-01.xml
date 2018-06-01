@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet author="Dennis (generated)" id="1527798972682-1">
+        <createSequence sequenceName="sprint_id_seq"/>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-2">
+        <createTable tableName="message_event">
+            <column name="topic_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message_reference" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-3">
+        <createTable tableName="sprint">
+            <column name="sprint_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="no_days" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sprint_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sprint_status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-4">
+        <createTable tableName="story">
+            <column name="story_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sprint_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-5">
+        <addPrimaryKey columnNames="topic_id" constraintName="message_event_pkey" tableName="message_event"/>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-6">
+        <addPrimaryKey columnNames="sprint_id" constraintName="sprint_pkey" tableName="sprint"/>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-7">
+        <addPrimaryKey columnNames="story_id" constraintName="story_pkey" tableName="story"/>
+    </changeSet>
+    <changeSet author="Dennis (generated)" id="1527798972682-8">
+        <addForeignKeyConstraint baseColumnNames="sprint_id" baseTableName="story" constraintName="story_to_sprint_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="sprint_id" referencedTableName="sprint"/>
+    </changeSet>
+</databaseChangeLog>
