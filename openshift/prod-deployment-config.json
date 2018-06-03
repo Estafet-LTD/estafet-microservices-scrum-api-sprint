@@ -86,6 +86,7 @@
 							}
 						],
 						"name": "sprint-api",
+						"image": "sprint-api:latest",
 						"imagePullPolicy": "Always",
 						"ports": [
 							{
