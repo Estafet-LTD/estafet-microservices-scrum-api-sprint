@@ -2,7 +2,8 @@
 	"kind": "DeploymentConfig",
 	"metadata": {
 		"labels": {
-			"app": "sprint-api"
+			"app": "sprint-api",
+			"product": "microservices-scrum"
 		},
 		"name": "sprint-api"
 	},
