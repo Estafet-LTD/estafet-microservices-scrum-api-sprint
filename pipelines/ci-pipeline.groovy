@@ -15,15 +15,6 @@ node('maven') {
 	    } 
 	}
 
-	stage("update the database schema") {
-		sh "oc get pods --selector app=postgresql -o json -n ${project} > pods.json"
-		def json = readFile('pods.json');
-		def pod = new groovy.json.JsonSlurper().parseText(json).items[0].metadata.name
-		sh "oc rsync --no-perms=true --include=\"*.ddl\" --exclude=\"*\" ddl/ ${pod}:/tmp -n dev"
-		sh "oc exec ${pod}  -n ${project} -- /bin/sh -i -c \"psql -d ${microservice} -U postgres -f /tmp/drop-${microservice}-db.ddl\""
-		sh "oc exec ${pod}  -n ${project} -- /bin/sh -i -c \"psql -d ${microservice} -U postgres -f /tmp/create-${microservice}-db.ddl\""
-	}
-
 	stage("reset a-mq to purge topics") {
 		openshiftDeploy namespace: project, depCfg: "broker-amq", showBuildLogs: "true",  waitTime: "3000000"
 		openshiftVerifyDeployment namespace: project, depCfg: "broker-amq", replicaCount:"1", verifyReplicaCount: "true", waitTime: "300000"
