@@ -50,7 +50,7 @@
 							},
 							{
 								"name": "SPRINT_API_JDBC_URL",
-								"value": "jdbc:postgresql://postgresql.prod.svc:5432/sprint-api"
+								"value": "jdbc:postgresql://postgresql.prod.svc:5432/prod-sprint-api"
 							},
 							{
 								"name": "JAEGER_SAMPLER_TYPE",

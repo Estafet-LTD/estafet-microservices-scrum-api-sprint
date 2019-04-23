@@ -29,7 +29,7 @@ node('maven') {
 
 	stage("execute the container tests") {
 		withEnv(
-			[	"SPRINT_API_JDBC_URL=jdbc:postgresql://postgresql.${project}.svc:5432/${microservice}", 
+			[	"SPRINT_API_JDBC_URL=jdbc:postgresql://postgresql.${project}.svc:5432/${project}-${microservice}", 
 				"SPRINT_API_DB_USER=postgres", 
 				"SPRINT_API_DB_PASSWORD=welcome1",
 				"SPRINT_API_SERVICE_URI=http://${microservice}.${project}.svc:8080",

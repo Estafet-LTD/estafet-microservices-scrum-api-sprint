@@ -49,7 +49,7 @@
 							},
 							{
 								"name": "SPRINT_API_JDBC_URL",
-								"value": "jdbc:postgresql://postgresql.test.svc:5432/${microservice}"
+								"value": "jdbc:postgresql://postgresql.test.svc:5432/test-${microservice}"
 							},
 							{
 								"name": "JAEGER_SAMPLER_TYPE",
