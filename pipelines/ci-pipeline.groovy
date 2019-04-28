@@ -21,7 +21,7 @@ node('maven') {
 	}
 
 	stage("build & deploy container") {
-		sh "oc start-build ${project} --follow --wait --env JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
+		sh "oc start-build ${microservice} --follow --wait --env JBOSS_A_MQ_BROKER_URL=tcp://broker-amq-tcp.${project}.svc:61616 -n ${project}"
 		sleep time:120 
 	}
 
