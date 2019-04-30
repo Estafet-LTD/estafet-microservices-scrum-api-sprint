@@ -115,7 +115,6 @@ public class ITSprintTest {
 	public void testConsumeNewProject() {
 		NewProjectTopicProducer.send("{\"id\":2000,\"title\":\"My Project #1\",\"noSprints\":3,\"sprintLengthDays\":5}");
 		Sprint sprint = newSprintTopicConsumer.consume();
-		assertThat(sprint.getId(), is(1));
 		assertThat(sprint.getNumber(), is(1));
 		assertThat(sprint.getStatus(), is("Active"));
 		assertThat(sprint.getProjectId(), is(2000));
