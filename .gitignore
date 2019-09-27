@@ -2,6 +2,3 @@
 /src/main/java/META-INF
 /release-pipeline.groovy.bak
 /createdb.sh
-.project
-.classpath
-.settings/
