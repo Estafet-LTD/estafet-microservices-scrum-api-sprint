@@ -52,6 +52,9 @@ public class Sprint {
 	@Column(name = "NO_DAYS", nullable = false)
 	private Integer noDays;
 
+	@Transient
+	private String version;
+
 	@JsonIgnore
 	@Transient
 	private Sprint next;
@@ -152,6 +155,10 @@ public class Sprint {
 			}
 			status = "Completed";
 		}
+	}
+
+	public String getVersion() {
+		return version;
 	}
 
 	@JsonIgnore
@@ -256,9 +263,10 @@ public class Sprint {
 		return calculateSprints(toCalendarString(newCalendar()), projectId, noDays, noSprints);
 	}
 
-	public static Sprint getAPI() {
+	public static Sprint getAPI(String version) {
 		Sprint sprint = new Sprint(1, 5);
 		sprint.id = 1;
+		sprint.version = API.getVersion(version);
 		return sprint;
 	}
 }

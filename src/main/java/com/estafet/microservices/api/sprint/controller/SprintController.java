@@ -3,6 +3,7 @@ package com.estafet.microservices.api.sprint.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +19,15 @@ import com.estafet.microservices.api.sprint.service.SprintService;
 @RestController
 public class SprintController {
 
+	@Value("${app.version}")
+	private String appVersion;
+	
 	@Autowired
 	private SprintService sprintService;
 	
 	@GetMapping(value = "/api")
 	public Sprint getAPI() {
-		return Sprint.getAPI();
+		return Sprint.getAPI(appVersion);
 	}
 			
 	@GetMapping(value = "/sprint/{id}")
