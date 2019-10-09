@@ -101,6 +101,11 @@ node("maven") {
 		println "The tests passed successfully"
 		sh "oc patch dc/${microservice} -p '{\"metadata\":{\"labels\":{\"testStatus\":\"untested\"}}}' -n ${project}"		
 	}	
+	
+	stage("flag this microservice as untested") {
+		println "The tests passed successfully"
+		sh "oc patch dc/${env}${microservice} -p '{\"metadata\":{\"labels\":{\"testStatus\":\"untested\"}}}' -n ${project}"		
+	}	
 
 }
 
