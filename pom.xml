@@ -97,6 +97,7 @@
 								<configuration>
 									<autocommit>true</autocommit>
 									<sqlCommand>DROP TABLE IF EXISTS DATABASECHANGELOG</sqlCommand>
+									<sqlCommand>DROP TABLE IF EXISTS DATABASECHANGELOGLOCK</sqlCommand>
 								</configuration>
 							</execution>
 							<execution>
