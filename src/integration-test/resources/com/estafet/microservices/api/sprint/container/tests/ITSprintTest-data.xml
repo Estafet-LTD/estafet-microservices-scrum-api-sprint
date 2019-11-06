@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-	<sprint sprint_id="1000" start_date="2017-10-01 00:00:00" end_date="2017-10-06 00:00:00" sprint_number="5" no_days="5" sprint_status="Active" project_id="1"/>
-	<sprint sprint_id="1001" start_date="2016-10-01 00:00:00" end_date="2016-10-06 00:00:00" sprint_number="5" no_days="5" sprint_status="Completed" project_id="1"/>
-	<story/>
-</dataset>
