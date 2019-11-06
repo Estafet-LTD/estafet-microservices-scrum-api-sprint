@@ -61,5 +61,9 @@ node("maven") {
 		openshiftVerifyDeployment namespace: project, depCfg: microservice, replicaCount:"1", verifyReplicaCount: "true", waitTime: "300000" 
 	}
 
+	stage("expose service to enable local testing") {
+		sh "oc expose service $microservice -n $project"
+	}
+
 }
 
