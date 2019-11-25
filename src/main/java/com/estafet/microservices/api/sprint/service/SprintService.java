@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.estafet.microservices.api.sprint.dao.SprintDAO;
 import com.estafet.microservices.api.sprint.messages.CalculateSprints;
+import com.estafet.microservices.api.sprint.messages.Deleted;
 import com.estafet.microservices.api.sprint.model.Project;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.model.Story;
@@ -18,6 +19,11 @@ public class SprintService {
 	@Autowired
 	private SprintDAO sprintDAO;
 
+	@Transactional
+	public Deleted deleteAll() {
+		return new Deleted(sprintDAO.deleteAll());
+	}
+	
 	@Transactional
 	public void addStory(Story story) {
 		if (story.getSprintId() != null) {

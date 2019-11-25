@@ -49,5 +49,9 @@ public class SprintDAO {
 		return entityManager.createQuery("select s from Sprint s where s.projectId = " + projectId, Sprint.class)
 				.getResultList();
 	}
+	
+	public int deleteAll() {
+		return entityManager.createQuery("DELETE FROM Sprint").executeUpdate();
+	}
 
 }
