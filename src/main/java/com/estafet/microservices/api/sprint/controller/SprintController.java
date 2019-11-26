@@ -18,6 +18,8 @@ import com.estafet.microservices.api.sprint.messages.Deleted;
 import com.estafet.microservices.api.sprint.model.Sprint;
 import com.estafet.microservices.api.sprint.service.SprintService;
 
+import io.opentracing.Tracer;
+
 @RestController
 public class SprintController {
 
@@ -27,8 +29,12 @@ public class SprintController {
 	@Autowired
 	private SprintService sprintService;
 	
+	@Autowired
+	private Tracer tracer;	
+	
 	@GetMapping(value = "/api")
 	public Sprint getAPI() {
+		tracer.activeSpan().deactivate();
 		return Sprint.getAPI(appVersion);
 	}
 			
