@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.estafet.microservices.api.sprint.model.Sprint;
+import com.estafet.microservices.scrum.lib.commons.properties.PropertyUtils;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -32,7 +33,7 @@ public class ITSprintTest {
 	
 	@Before
 	public void before() {
-		RestAssured.baseURI = System.getenv("SPRINT_API_SERVICE_URI");
+		RestAssured.baseURI = PropertyUtils.instance().getProperty("SPRINT_API_SERVICE_URI");
 	}
 
 	@After
