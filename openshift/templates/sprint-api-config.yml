@@ -94,21 +94,21 @@ objects:
                   secretKeyRef:
                     name: ${MICROSERVICE} 
                     key: JBOSS_A_MQ_BROKER_USER 
-              - name: PROJECT_BURNDOWN_REPOSITORY_DB_PASSWORD
+              - name: SPRINT_API_DB_PASSWORD
                 valueFrom:
                   secretKeyRef:
                     name: ${MICROSERVICE} 
-                    key: PROJECT_BURNDOWN_REPOSITORY_DB_PASSWORD
-              - name: PROJECT_BURNDOWN_REPOSITORY_DB_USER
+                    key: SPRINT_API_DB_PASSWORD
+              - name: SPRINT_API_DB_USER
                 valueFrom:
                   secretKeyRef:
                     name: ${MICROSERVICE} 
-                    key: PROJECT_BURNDOWN_REPOSITORY_DB_USER                
-              - name: PROJECT_BURNDOWN_REPOSITORY_JDBC_URL   
+                    key: SPRINT_API_DB_USER                
+              - name: SPRINT_API_JDBC_URL   
                 valueFrom:
                   configMapKeyRef:
                     name: ${MICROSERVICE} 
-                    key: PROJECT_BURNDOWN_REPOSITORY_JDBC_URL                 
+                    key: SPRINT_API_JDBC_URL                 
               - name: JAEGER_SERVICE_NAME
                 valueFrom:
                   configMapKeyRef:
